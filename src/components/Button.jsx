@@ -1,73 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import colors from "../config/colorsBtn";
 
-const variants = {
-  primary: {
-    default: { background: "#001D29", color: "white" },
-    hover: { background: "#1a343e", color: "white" },
-    pressed: { background: "#40565F", color: "white" },
-    disabled: { background: "#E5E9EA", color: "#66777E" },
-  },
-  secondary: {
-    default: { background: "transparent", color: "#001D29", border: "1px solid #001D29" },
-    hover: { background: "transparent", color: "#1a343e", border: "1px solid #1a343e" },
-    pressed: { background: "transparent", color: "#40565F", border: "1px solid #40565F" },
-    disabled: { background: "transparent", color: "#66777E", border: "1px solid #E5E9EA" },
-  },
-  outline: {
-    default: { background: "transparent", color: "#E71D36", border: "1px solid #E71D36" },
-    hover: { background: "transparent", color: "#EC4A5E", border: "1px solid #EC4A5E" },
-    pressed: { background: "transparent", color: "#E02A36B2", border: "1px solid #E02A36B2" },
-    disabled: { background: "transparent", color: "#66777E", border: "1px solid #E5E9EA" },
-  },
-};
-
-// Styled button
 const StyledButton = styled.button`
-  width: 80px;
-  height: 40px;
-  border-radius: 12px;
-  padding-top: 8px;
-  padding-right: 16px;
-  padding-bottom: 8px;
-  padding-left: 16px;
-  border: none;
-  gap: 8px;
+  width: ${({ type }) => colors[type]?.width || "80px"};
+  height: ${({ type }) => colors[type]?.height || "40px"};
+  border-radius: ${({ type }) => colors[type]?.borderRadius || "12px"};
   font-family: Roboto;
   font-weight: 500;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: 0%;
+  font-size: ${({ type }) => colors[type]?.fontSize || "16px"};
   text-align: center;
   cursor: pointer;
-  transition: background 0.3s;
-  ${({ variant, state }) => variants[variant][state] || variants.primary.default};
+  transition: all 0.3s;
+  background: ${({ type }) => colors[type]?.default || colors.primary.default};
+  color: ${({ type }) => colors[type]?.text || colors.primary.text};
+  border: ${({ type }) =>
+    colors[type]?.border ? `1px solid ${colors[type].border}` : "none"};
+  padding: ${({ type }) => colors[type]?.padding || "8px 16px"};
+  gap: ${({ type }) => colors[type]?.gap || "8px"};
 
   &:hover {
-    ${({ variant }) => variants[variant].hover};
+    background: ${({ type }) => colors[type]?.hover || colors.primary.hover};
+    color: ${({ type }) => colors[type]?.textHover || colors.primary.textHover};
+    border: ${({ type }) =>
+      colors[type]?.borderHover ? `1px solid ${colors[type].borderHover}` : "none"};
   }
 
   &:active {
-    ${({ variant }) => variants[variant].pressed};
+    background: ${({ type }) => colors[type]?.pressed || colors.primary.pressed};
+    color: ${({ type }) => colors[type]?.textPressed || colors.primary.textPressed};
+    border: ${({ type }) =>
+      colors[type]?.borderPressed ? `1px solid ${colors[type].borderPressed}` : "none"};
   }
 
   &:disabled {
-    ${({ variant }) => variants[variant].disabled};
+    background: ${({ type }) => colors[type]?.disabled || colors.primary.disabled};
+    color: ${({ type }) => colors[type]?.textDisabled || colors.primary.textDisabled};
+    border: ${({ type }) =>
+      colors[type]?.borderDisabled ? `1px solid ${colors[type].borderDisabled}` : "none"};
     cursor: not-allowed;
-  }
-
-  &.hover {
-    ${({ variant }) => variants[variant].hover};
-  }
-
-  &.pressed {
-    ${({ variant }) => variants[variant].pressed};
   }
 `;
 
-const Button = ({ children, variant = "primary", className, ...props }) => {
+const Button = ({ children, type = "primary", ...props }) => {
+  const [, setState] = useState("default");
+
+  const handleClick = () => {
+    if (props.disabled) return;
+    setState("pressed");
+    setTimeout(() => setState("default"), 200);
+  };
+
   return (
-    <StyledButton variant={variant} state="default" className={className} {...props}>
+    <StyledButton type={type} {...props} onClick={handleClick}>
       {children}
     </StyledButton>
   );
