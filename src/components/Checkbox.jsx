@@ -24,7 +24,11 @@ const CheckboxIcon = styled.span`
 `;
 
 const LabelText = styled.span`
-  font-size: 14px;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18.75px;
+  letter-spacing: 0%;
   display: flex;
   align-items: center;
 `;
@@ -83,7 +87,7 @@ const Checkbox = ({ label, disabled = false, error = false, position = "labelRig
       <CheckboxIcon dangerouslySetInnerHTML={{ __html: getCheckboxSVG() }} />
       {(position === "labelRight" || position === "labelInfo") && (
         <LabelText>
-          {label} &nbsp; {position === "labelInfo" && (disabled ? <InfoDisabledIcon /> : <InfoIcon />)}
+          {label}&nbsp;{position === "labelInfo" && (disabled ? <InfoDisabledIcon /> : <InfoIcon />)}
         </LabelText>
       )}
     </CheckboxWrapper>
