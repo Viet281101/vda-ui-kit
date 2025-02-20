@@ -4,6 +4,7 @@ import ButtonsPage from "../pages/ButtonsPage";
 import CheckboxPage from "../pages/CheckboxPage";
 import RadioButtonPage from "../pages/RadioButtonPage";
 import SwitcherPage from "../pages/SwitcherPage";
+import TextInputPage from "../pages/TextInputPage";
 
 const AppRouter = () => {
   return (
@@ -13,12 +14,14 @@ const AppRouter = () => {
         <NavLink to="/checkboxes" className={({ isActive }) => (isActive ? "active" : "")}>Checkboxes</NavLink>
         <NavLink to="/radio-buttons" className={({ isActive }) => (isActive ? "active" : "")}>Radio Buttons</NavLink>
         <NavLink to="/switchers" className={({ isActive }) => (isActive ? "active" : "")}>Switchers</NavLink>
+        <NavLink to="/text-input" className={({ isActive }) => (isActive ? "active" : "")}>Text Input</NavLink>
       </nav>
       <Routes>
         <Route path="/" element={<ButtonsPage />} />
         <Route path="/checkboxes" element={<CheckboxPage />} />
         <Route path="/radio-buttons" element={<RadioButtonPage />} />
         <Route path="/switchers" element={<SwitcherPage />} />
+        <Route path="/text-input" element={<TextInputPage />} />
       </Routes>
     </Router>
   );

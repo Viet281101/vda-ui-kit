@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 
-const SwitcherPage = () => {
+const TextInputPage = () => {
   useEffect(() => {
-    console.log("SwitcherPage Loaded");
+    console.log("Text Input Field Loaded");
   }, []);
 
   return (
@@ -12,4 +12,4 @@ const SwitcherPage = () => {
   );
 };
 
-export default SwitcherPage;
+export default TextInputPage;
