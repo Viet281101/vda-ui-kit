@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 const CheckboxWrapper = styled.label`
@@ -35,6 +35,12 @@ const InfoIcon = () => (
   </svg>
 );
 
+const InfoDisabledIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M6.33337 3.66683H7.66671V5.00016H6.33337V3.66683ZM6.33337 6.3335H7.66671V10.3335H6.33337V6.3335ZM7.00004 0.333496C3.32004 0.333496 0.333374 3.32016 0.333374 7.00016C0.333374 10.6802 3.32004 13.6668 7.00004 13.6668C10.68 13.6668 13.6667 10.6802 13.6667 7.00016C13.6667 3.32016 10.68 0.333496 7.00004 0.333496ZM7.00004 12.3335C4.06004 12.3335 1.66671 9.94016 1.66671 7.00016C1.66671 4.06016 4.06004 1.66683 7.00004 1.66683C9.94004 1.66683 12.3334 4.06016 12.3334 7.00016C12.3334 9.94016 9.94004 12.3335 7.00004 12.3335Z" fill="#CCD2D4"/>
+  </svg>
+);
+
 const CheckboxSVG = {
   empty: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2ZM2 16H16V2H2V16Z" fill="#334A54"/></svg>`,
   checked: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.6 10.4L5.45 8.25C5.26667 8.06667 5.03333 7.975 4.75 7.975C4.46667 7.975 4.23333 8.06667 4.05 8.25C3.86667 8.43333 3.775 8.66667 3.775 8.95C3.775 9.23333 3.86667 9.46667 4.05 9.65L6.9 12.5C7.1 12.7 7.33333 12.8 7.6 12.8C7.86667 12.8 8.1 12.7 8.3 12.5L13.95 6.85C14.1333 6.66667 14.225 6.43333 14.225 6.15C14.225 5.86667 14.1333 5.63333 13.95 5.45C13.7667 5.26667 13.5333 5.175 13.25 5.175C12.9667 5.175 12.7333 5.26667 12.55 5.45L7.6 10.4ZM2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H16C16.55 0 17.0208 0.195833 17.4125 0.5875C17.8042 0.979167 18 1.45 18 2V16C18 16.55 17.8042 17.0208 17.4125 17.4125C17.0208 17.8042 16.55 18 16 18H2Z" fill="#001D29"/></svg>`,
@@ -45,6 +51,12 @@ const CheckboxSVG = {
 
 const Checkbox = ({ label, disabled = false, error = false, position = "labelRight", defaultChecked = false }) => {
   const [checked, setChecked] = useState(defaultChecked);
+
+  useEffect(() => {
+    if (disabled) {
+      setChecked(defaultChecked);
+    }
+  }, [defaultChecked, disabled]);
 
   const getCheckboxSVG = () => {
     if (error) return CheckboxSVG.emptyError;
@@ -58,13 +70,21 @@ const Checkbox = ({ label, disabled = false, error = false, position = "labelRig
     }
   };
 
+  const getTextColor = () => {
+    if (error) return "#E71D36";
+    if (disabled) return checked ? "#07171D" : "#99A4A9";
+    return "#001D29";
+  };
+
   return (
-    <CheckboxWrapper onClick={handleClick} disabled={disabled} color={error ? "#E71D36" : disabled ? "#66777E" : "#001D29"}>
+    <CheckboxWrapper onClick={handleClick} disabled={disabled} color={getTextColor()}>
       {position === "labelLeft" && <LabelText>{label}</LabelText>}
       <HiddenCheckbox checked={checked} disabled={disabled} onChange={handleClick} />
       <CheckboxIcon dangerouslySetInnerHTML={{ __html: getCheckboxSVG() }} />
       {(position === "labelRight" || position === "labelInfo") && (
-        <LabelText>{label} {position === "labelInfo" && <InfoIcon />}</LabelText>
+        <LabelText>
+          {label} &nbsp; {position === "labelInfo" && (disabled ? <InfoDisabledIcon /> : <InfoIcon />)}
+        </LabelText>
       )}
     </CheckboxWrapper>
   );

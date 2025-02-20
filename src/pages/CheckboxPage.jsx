@@ -20,10 +20,10 @@ const CheckboxPage = () => {
           {/* Enabled / Off */}
           <tr>
             <td>Enabled / Off</td>
-            <td><Checkbox label="Text option" position="labelLeft" defaultChecked={false} /></td>
-            <td><Checkbox label="Text option" position="labelRight" defaultChecked={false} /></td>
-            <td><Checkbox defaultChecked={false} /></td>
-            <td><Checkbox label="Text option" position="labelInfo" defaultChecked={false} /></td>
+            <td><Checkbox label="Text option" position="labelLeft"/></td>
+            <td><Checkbox label="Text option" position="labelRight"/></td>
+            <td><Checkbox/></td>
+            <td><Checkbox label="Text option" position="labelInfo"/></td>
           </tr>
 
           {/* Enabled / On */}
@@ -38,10 +38,10 @@ const CheckboxPage = () => {
           {/* Disabled / Off */}
           <tr>
             <td>Disabled / Off</td>
-            <td><Checkbox label="Text option" disabled position="labelLeft" defaultChecked={false} /></td>
-            <td><Checkbox label="Text option" disabled position="labelRight" defaultChecked={false} /></td>
-            <td><Checkbox disabled defaultChecked={false} /></td>
-            <td><Checkbox label="Text option" disabled position="labelInfo" defaultChecked={false} /></td>
+            <td><Checkbox label="Text option" disabled position="labelLeft"/></td>
+            <td><Checkbox label="Text option" disabled position="labelRight"/></td>
+            <td><Checkbox disabled/></td>
+            <td><Checkbox label="Text option" disabled position="labelInfo"/></td>
           </tr>
 
           {/* Disabled / On */}
@@ -56,10 +56,10 @@ const CheckboxPage = () => {
           {/* Error */}
           <tr>
             <td>Error</td>
-            <td><Checkbox label="Text option" error position="labelLeft" defaultChecked={false} /></td>
-            <td><Checkbox label="Text option" error position="labelRight" defaultChecked={false} /></td>
-            <td><Checkbox error defaultChecked={false} /></td>
-            <td><Checkbox label="Text option" error position="labelInfo" defaultChecked={false} /></td>
+            <td><Checkbox label="Text option" error position="labelLeft"/></td>
+            <td><Checkbox label="Text option" error position="labelRight"/></td>
+            <td><Checkbox error/></td>
+            <td><Checkbox label="Text option" error position="labelInfo"/></td>
           </tr>
         </tbody>
       </table>
