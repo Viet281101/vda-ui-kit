@@ -1,0 +1,30 @@
+.checkbox-page {
+  gap: 80px;
+  padding: 20px;
+  h2 {
+    text-align: center;
+    color: #333;
+  }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+    th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    }
+  
+    th {
+    background: #f4f4f4;
+    color: #333;
+    font-weight: bold;
+    }
+  }
+}
