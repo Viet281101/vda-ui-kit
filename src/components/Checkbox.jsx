@@ -72,6 +72,7 @@ const Checkbox = ({ label, disabled = false, error = false, position = "labelRig
     if (!disabled) {
       setChecked((prev) => !prev);
     }
+    // console.log(label, checked);
   };
 
   const getTextColor = () => {
