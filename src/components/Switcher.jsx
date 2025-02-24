@@ -57,6 +57,12 @@ const InfoIcon = () => (
   </svg>
 );
 
+const InfoDisabledIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.33337 3.66683H7.66671V5.00016H6.33337V3.66683ZM6.33337 6.3335H7.66671V10.3335H6.33337V6.3335ZM7.00004 0.333496C3.32004 0.333496 0.333374 3.32016 0.333374 7.00016C0.333374 10.6802 3.32004 13.6668 7.00004 13.6668C10.68 13.6668 13.6667 10.6802 13.6667 7.00016C13.6667 3.32016 10.68 0.333496 7.00004 0.333496ZM7.00004 12.3335C4.06004 12.3335 1.66671 9.94016 1.66671 7.00016C1.66671 4.06016 4.06004 1.66683 7.00004 1.66683C9.94004 1.66683 12.3334 4.06016 12.3334 7.00016C12.3334 9.94016 9.94004 12.3335 7.00004 12.3335Z" fill="#CCD2D4"/>
+  </svg>
+);
+
 const Switcher = ({ label, disabled, error, defaultChecked = false, position = "labelLeft", onChange }) => {
   const [isOn, setIsOn] = useState(defaultChecked);
 
@@ -79,7 +85,7 @@ const Switcher = ({ label, disabled, error, defaultChecked = false, position = "
     <SwitcherWrapper onClick={handleClick} disabled={disabled} textColor={textColor}>
       {label && <LabelText>{label}</LabelText>}
       <HiddenCheckbox checked={isOn} onChange={handleClick} disabled={disabled} />
-      {position === "labelInfo" && <InfoIcon />}
+      {position === "labelInfo" && (disabled ? <InfoDisabledIcon /> : <InfoIcon />)}
       <SwitcherTrack isOn={isOn} disabled={disabled} error={error}>
         <SwitcherThumb isOn={isOn} disabled={disabled} error={error} />
       </SwitcherTrack>
