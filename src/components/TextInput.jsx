@@ -6,12 +6,17 @@ const InputWrapper = styled.div`
   flex-direction: column;
   gap: 4px;
   width: ${({ width }) => width || "361px"};
+  height: ${({ height }) => height};
 `;
 
 const Label = styled.label`
-  font-size: 12px;
-  color: #001D29;
+  font-family: Roboto;
   font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  letter-spacing: 0%;
+  color: #334A54;
+  padding-left: 16px;
 `;
 
 const InputContainer = styled.div`
@@ -33,7 +38,7 @@ const InputField = styled.input`
   transition: border 0.3s ease-in-out;
 
   &:focus {
-    border: 1px solid #007EB0;
+    border: 1px solid #001D29;
   }
 `;
 
@@ -59,7 +64,7 @@ const TextInput = ({
   const [inputValue, setInputValue] = useState("");
 
   return (
-    <InputWrapper width={width}>
+    <InputWrapper width={width} height={height}>
       {label && <Label>{label}</Label>}
       <InputContainer>
         <InputField 

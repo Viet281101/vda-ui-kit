@@ -13,6 +13,7 @@ import DatePickerPage from "../pages/DatePickerPage";
 import TimePickerPage from "../pages/TimePickerPage";
 import PhoneMaskPage from "../pages/PhoneMaskPage";
 import TextAreaPage from "../pages/TextAreaPage";
+import SignatureAreaPage from "../pages/SignatureAreaPage";
 
 const NavbarContainer = styled.div`
   overflow-x: auto;
@@ -84,6 +85,7 @@ const AppRouter = () => {
           <NavItem to="/time-picker">Time Picker</NavItem>
           <NavItem to="/phone-mask">Phone Mask</NavItem>
           <NavItem to="/text-area">Text Area</NavItem>
+          <NavItem to="/signature-area">Signature Area</NavItem>
         </Navbar>
       </NavbarContainer>
 
@@ -100,6 +102,7 @@ const AppRouter = () => {
         <Route path="/time-picker" element={<TimePickerPage />} />
         <Route path="/phone-mask" element={<PhoneMaskPage />} />
         <Route path="/text-area" element={<TextAreaPage />} />
+        <Route path="/signature-area" element={<SignatureAreaPage />} />
       </Routes>
     </Router>
   );
