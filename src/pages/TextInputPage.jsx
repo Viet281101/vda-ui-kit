@@ -22,14 +22,26 @@ const TextInputPage = () => {
           {/* Default State */}
           <tr>
             <td>Default</td>
-            <td><TextInput placeholder="Label" /></td>
-            <td><TextInput placeholder="Label" showCounter={true} /></td>
+            <td><TextInput placeholder="Text Input" /></td>
+            <td><TextInput placeholder="Text Input" showCounter={true} /></td>
           </tr>
           {/* Focused State */}
           <tr>
             <td>Focused</td>
+            <td><TextInput label="Label" placeholder="Text Input" alwaysFocused ={true} /></td>
+            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysFocused ={true} /></td>
+          </tr>
+          {/* Label Focused State */}
+          <tr>
+            <td>Label Focused</td>
             <td><TextInput label="Label" placeholder="Text Input" /></td>
             <td><TextInput label="Label" placeholder="Text Input" showCounter={true} /></td>
+          </tr>
+          {/* Completed State */}
+          <tr>
+            <td>Completed</td>
+            <td><TextInput label="Label" placeholder="Text Input" alwaysShowLabel={true} /></td>
+            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysShowLabel={true} /></td>
           </tr>
         </tbody>
       </table>
