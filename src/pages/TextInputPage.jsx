@@ -43,6 +43,24 @@ const TextInputPage = () => {
             <td><TextInput label="Label" placeholder="Text Input" alwaysShowLabel={true} /></td>
             <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysShowLabel={true} /></td>
           </tr>
+          {/* Error State */}
+          <tr>
+            <td>Error</td>
+            <td><TextInput label="Label" placeholder="Text Input" alwaysShowLabel={true} error={true} /></td>
+            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysShowLabel={true} error={true} /></td>
+          </tr>
+          {/* Disabled State */}
+          <tr>
+            <td>Disabled</td>
+            <td><TextInput label="Label" placeholder="Text Input" disabled={true} /></td>
+            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} disabled={true} /></td>
+          </tr>
+          {/* Disabled Completed State */}
+          <tr>
+            <td>Disabled Completed</td>
+            <td><TextInput label="Label" placeholder="Text Input" alwaysShowLabel={true} disabled={true} /></td>
+            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysShowLabel={true} disabled={true} /></td>
+          </tr>
         </tbody>
       </table>
     </div>
