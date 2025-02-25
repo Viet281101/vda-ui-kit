@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+import styled from "styled-components";
 import ButtonsPage from "../pages/ButtonsPage";
 import CheckboxPage from "../pages/CheckboxPage";
 import RadioButtonPage from "../pages/RadioButtonPage";
@@ -13,23 +14,79 @@ import TimePickerPage from "../pages/TimePickerPage";
 import PhoneMaskPage from "../pages/PhoneMaskPage";
 import TextAreaPage from "../pages/TextAreaPage";
 
+const NavbarContainer = styled.div`
+  overflow-x: auto;
+  white-space: nowrap;
+  background: #2c3e50;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 10px 0;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #7f8c8d;
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &:hover {
+    cursor: grab;
+  }
+`;
+
+const Navbar = styled.nav`
+  display: flex;
+  gap: 15px;
+  padding: 10px 20px;
+`;
+
+const NavItem = styled(NavLink)`
+  color: #ecf0f1;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 5px;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    background: #34495e;
+    color: #ffffff;
+  }
+
+  &.active {
+    background: #e74c3c;
+    color: #fff;
+    font-weight: bold;
+  }
+`;
+
 const AppRouter = () => {
   return (
     <Router>
-      <nav style={{ display: "flex", gap: "15px", padding: "10px", background: "#f4f4f4" }}>
-        <NavLink to="/" className={({ isActive }) => (isActive ? "active" : "")}>Buttons</NavLink>
-        <NavLink to="/checkboxes" className={({ isActive }) => (isActive ? "active" : "")}>Checkboxes</NavLink>
-        <NavLink to="/radio-buttons" className={({ isActive }) => (isActive ? "active" : "")}>Radio Buttons</NavLink>
-        <NavLink to="/switchers" className={({ isActive }) => (isActive ? "active" : "")}>Switchers</NavLink>
-        <NavLink to="/text-input" className={({ isActive }) => (isActive ? "active" : "")}>Text Input</NavLink>
-        <NavLink to="/password" className={({ isActive }) => (isActive ? "active" : "")}>Password</NavLink>
-        <NavLink to="/search" className={({ isActive }) => (isActive ? "active" : "")}>Search</NavLink>
-        <NavLink to="/dropdown" className={({ isActive }) => (isActive ? "active" : "")}>Dropdown</NavLink>
-        <NavLink to="/date-picker" className={({ isActive }) => (isActive ? "active" : "")}>Date Picker</NavLink>
-        <NavLink to="/time-picker" className={({ isActive }) => (isActive ? "active" : "")}>Time Picker</NavLink>
-        <NavLink to="/phone-mask" className={({ isActive }) => (isActive ? "active" : "")}>Phone Mask</NavLink>
-        <NavLink to="/text-area" className={({ isActive }) => (isActive ? "active" : "")}>Text Area</NavLink>
-      </nav>
+      <NavbarContainer>
+        <Navbar>
+          <NavItem to="/">Buttons</NavItem>
+          <NavItem to="/checkboxes">Checkboxes</NavItem>
+          <NavItem to="/radio-buttons">Radio Buttons</NavItem>
+          <NavItem to="/switchers">Switchers</NavItem>
+          <NavItem to="/text-input">Text Input</NavItem>
+          <NavItem to="/password">Password</NavItem>
+          <NavItem to="/search">Search</NavItem>
+          <NavItem to="/dropdown">Dropdown</NavItem>
+          <NavItem to="/date-picker">Date Picker</NavItem>
+          <NavItem to="/time-picker">Time Picker</NavItem>
+          <NavItem to="/phone-mask">Phone Mask</NavItem>
+          <NavItem to="/text-area">Text Area</NavItem>
+        </Navbar>
+      </NavbarContainer>
+
       <Routes>
         <Route path="/" element={<ButtonsPage />} />
         <Route path="/checkboxes" element={<CheckboxPage />} />
