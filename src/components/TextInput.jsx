@@ -46,6 +46,10 @@ const InputField = styled.input`
   &:focus {
     border: ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
   }
+
+  &::placeholder {
+    color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
+  }
 `;
 
 const CounterWrapper = styled.div`
@@ -75,7 +79,8 @@ const TextInput = ({
   alwaysFocused = false,
   error = false,
   errorMessage = "Error message",
-  disabled = false
+  disabled = false,
+  defaultValue = ""
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -98,7 +103,7 @@ const TextInput = ({
         <InputField 
           ref={inputRef}
           placeholder={placeholder} 
-          value={inputValue} 
+          value={disabled ? defaultValue : inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => !alwaysFocused && setIsFocused(false)}
