@@ -32,8 +32,7 @@ const InputField = styled.input`
   width: 329px;
   height: 19px;
   padding: 12px 16px;
-  border: ${({ disabled, error }) =>
-    disabled ? "none" : error ? "1px solid #F8BBC3" : "1px solid #CCD2D4"};
+  border: 1px solid ${({ isFocused, disabled, error }) => (disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5")};
   border-radius: 12px;
   background: ${({ disabled }) => (disabled ? "#F7FBFC" : "#FFFFFF")};
   font-size: 16px;
@@ -89,6 +88,7 @@ const TextInput = ({
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
+      setIsFocused(true);
     }
   }, [alwaysFocused]);
 
