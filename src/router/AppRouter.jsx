@@ -8,14 +8,14 @@ import SwitcherPage from "../pages/SwitcherPage";
 import TextInputPage from "../pages/TextInputPage";
 import PasswordPage from "../pages/PasswordPage";
 import SearchPage from "../pages/SearchPage";
-import NumberPage from "../pages/NumberPage";
-import NumberLabelPage from "../pages/NumberLabelPage";
 import DropdownPage from "../pages/DropdownPage";
 import DropdownChipsPage from "../pages/DropdownChipsPage";
 import DatePickerPage from "../pages/DatePickerPage";
 import TimePickerPage from "../pages/TimePickerPage";
 import PhoneMaskPage from "../pages/PhoneMaskPage";
 import TextAreaPage from "../pages/TextAreaPage";
+import NumberPage from "../pages/NumberPage";
+import NumberLabelPage from "../pages/NumberLabelPage";
 import SignatureAreaPage from "../pages/SignatureAreaPage";
 
 const NavbarContainer = styled.div`
@@ -82,15 +82,15 @@ const AppRouter = () => {
           <NavItem to="/switchers">Switchers</NavItem>
           <NavItem to="/text-input">Text Input</NavItem>
           <NavItem to="/password">Password</NavItem>
-          <NavItem to="/search">Search</NavItem>
-          <NavItem to="/number">Number</NavItem>
-          <NavItem to="/number-label">Number + Label</NavItem>
+          <NavItem to="/search">Searchbar</NavItem>
           <NavItem to="/dropdown">Dropdown</NavItem>
           <NavItem to="/dropdown-chips">Dropdown + Chips</NavItem>
           <NavItem to="/date-picker">Date Picker</NavItem>
           <NavItem to="/time-picker">Time Picker</NavItem>
           <NavItem to="/phone-mask">Phone Mask</NavItem>
           <NavItem to="/text-area">Text Area</NavItem>
+          <NavItem to="/number">Number</NavItem>
+          <NavItem to="/number-label">Number + Label</NavItem>
           <NavItem to="/signature-area">Signature Area</NavItem>
         </Navbar>
       </NavbarContainer>
@@ -103,14 +103,14 @@ const AppRouter = () => {
         <Route path="/text-input" element={<TextInputPage />} />
         <Route path="/password" element={<PasswordPage />} />
         <Route path="/search" element={<SearchPage />} />
-        <Route path="/number" element={<NumberPage />} />
-        <Route path="/number-label" element={<NumberLabelPage />} />
         <Route path="/dropdown" element={<DropdownPage />} />
         <Route path="/dropdown-chips" element={<DropdownChipsPage />} />
         <Route path="/date-picker" element={<DatePickerPage />} />
         <Route path="/time-picker" element={<TimePickerPage />} />
         <Route path="/phone-mask" element={<PhoneMaskPage />} />
         <Route path="/text-area" element={<TextAreaPage />} />
+        <Route path="/number" element={<NumberPage />} />
+        <Route path="/number-label" element={<NumberLabelPage />} />
         <Route path="/signature-area" element={<SignatureAreaPage />} />
       </Routes>
     </Router>

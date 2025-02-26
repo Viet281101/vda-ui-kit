@@ -110,7 +110,8 @@ const PasswordInput = ({
   alwaysFocused = false,
   error = false,
   errorMessage = "Error message",
-  disabled = false
+  disabled = false,
+  defaultValue = ""
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -136,10 +137,10 @@ const PasswordInput = ({
           ref={inputRef}
           type={isVisible ? "text" : "password"}
           placeholder={placeholder} 
-          value={inputValue}
+          value={disabled ? defaultValue : inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
+          onBlur={() => !alwaysFocused && setIsFocused(false)}
           maxLength={maxLength}
           isFocused={isFocused}
           error={error}

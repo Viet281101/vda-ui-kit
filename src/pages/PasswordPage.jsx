@@ -28,14 +28,14 @@ const PasswordPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><PasswordInput label="Password" placeholder="Password" /></td>
-            <td><PasswordInput label="Password" placeholder="Password" /></td>
+            <td><PasswordInput label="Password" placeholder="Password" alwaysFocused={true} /></td>
+            <td><PasswordInput label="Password" placeholder="Password" alwaysFocused={true} /></td>
           </tr>
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><PasswordInput label="Password" placeholder="Password" showCounter={true} /></td>
-            <td><PasswordInput label="Password" placeholder="Password" showCounter={true} /></td>
+            <td><PasswordInput label="Password" placeholder="Password" showCounter={true} alwaysShowLabel={true} /></td>
+            <td><PasswordInput label="Password" placeholder="Password" showCounter={true} alwaysShowLabel={true} /></td>
           </tr>
           {/* Error State */}
           <tr>
