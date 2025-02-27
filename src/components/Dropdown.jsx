@@ -76,7 +76,7 @@ const DropdownList = styled.ul`
   border: 1px solid #C4CDD5;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: 0;
+  margin-top: ${({ error}) => (error ? "-18px" : "0")};
   padding: 8px 0;
   list-style: none;
   max-height: 200px;
@@ -86,13 +86,18 @@ const DropdownList = styled.ul`
 
 const DropdownItem = styled.li`
   padding: 12px 16px;
-  font-size: 16px;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0%;
   color: ${({ selected }) => (selected ? "#001D29" : "#334A54")};
   background: ${({ selected }) => (selected ? "#F0F4F8" : "transparent")};
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  border-bottom: 1px solid #EFF3F4;
   &:hover {
     background: #F7FBFC;
   }
@@ -161,7 +166,7 @@ const Dropdown = ({ label, placeholder = "Select an option", options = [], width
         </ArrowIcon>
       </DropdownContainer>
       {isOpen && (
-        <DropdownList>
+        <DropdownList error={error}>
           {options.map((option) => (
             <DropdownItem key={option.value} selected={option.value === selectedValue} onClick={() => { 
               setSelectedValue(option.value); 
