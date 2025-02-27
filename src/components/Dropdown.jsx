@@ -7,6 +7,7 @@ const DropdownWrapper = styled.div`
   gap: 4px;
   width: ${({ width }) => width || "361px"};
   height: ${({ height }) => height};
+  position: relative;
 `;
 
 const Label = styled.label`
@@ -66,6 +67,43 @@ const ErrorMessage = styled.span`
   padding-left: 16px;
 `;
 
+const DropdownList = styled.ul`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #C4CDD5;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
+  padding: 8px 0;
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+`;
+
+const DropdownItem = styled.li`
+  padding: 12px 16px;
+  font-size: 16px;
+  color: ${({ selected }) => (selected ? "#001D29" : "#334A54")};
+  background: ${({ selected }) => (selected ? "#F0F4F8" : "transparent")};
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  &:hover {
+    background: #F7FBFC;
+  }
+`;
+
+const CheckIcon = () => (
+  <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.54972 9.15L14.0247 0.675C14.2247 0.475 14.4581 0.375 14.7247 0.375C14.9914 0.375 15.2247 0.475 15.4247 0.675C15.6247 0.875 15.7247 1.1125 15.7247 1.3875C15.7247 1.6625 15.6247 1.9 15.4247 2.1L6.24972 11.3C6.04972 11.5 5.81639 11.6 5.54972 11.6C5.28305 11.6 5.04972 11.5 4.84972 11.3L0.549719 7C0.349719 6.8 0.253885 6.5625 0.262219 6.2875C0.270552 6.0125 0.374719 5.775 0.574719 5.575C0.774719 5.375 1.01222 5.275 1.28722 5.275C1.56222 5.275 1.79972 5.375 1.99972 5.575L5.54972 9.15Z" fill="#001D29"/>
+  </svg>
+);
+
 const ArrowDown = ({ color = "#334A54" }) => (
   <svg width="19" height="10" viewBox="0 0 19 10" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M9.25 7.8232L1.71725 0.290447C1.51858 0.0917802 1.28208 -0.00497022 1.00775 0.000196442C0.733417 0.00536311 0.496833 0.10728 0.298 0.305947C0.0993329 0.504613 0 0.741114 0 1.01545C0 1.28978 0.0993329 1.52636 0.298 1.7252L7.96925 9.38095C8.15008 9.56161 8.35267 9.69553 8.577 9.7827C8.80133 9.87003 9.02567 9.9137 9.25 9.9137C9.47433 9.9137 9.69867 9.87003 9.923 9.7827C10.1473 9.69553 10.3499 9.56161 10.5308 9.38095L18.202 1.7097C18.4007 1.51103 18.4974 1.27711 18.4923 1.00795C18.4871 0.738613 18.3852 0.504613 18.1865 0.305947C17.9878 0.10728 17.7513 0.00794638 17.477 0.00794638C17.2027 0.00794638 16.9661 0.10728 16.7673 0.305947L9.25 7.8232Z" fill={color}/>
@@ -78,19 +116,26 @@ const ArrowUp = ({ color = "#334A54" }) => (
   </svg>
 );
 
-const Dropdown = ({
-  label,
-  placeholder = "Select an option",
-  options = [],
-  value,
-  onChange,
-  width = "361px",
-  height = "80px",
-  error = false,
-  disabled = false
-}) => {
+/**
+ * Dropdown component renders a customizable dropdown menu.
+ *
+ * @param {Object} props - The properties object.
+ * @param {string} props.label - The label for the dropdown.
+ * @param {string} [props.placeholder="Select an option"] - The placeholder text when no option is selected.
+ * @param {Array} props.options - The list of options to display in the dropdown.
+ * @param {string} [props.width] - The width of the dropdown.
+ * @param {string} [props.height] - The height of the dropdown.
+ * @param {boolean} [props.error] - Indicates if there is an error.
+ * @param {boolean} [props.disabled] - Indicates if the dropdown is disabled.
+ * @param {string} [props.value] - The currently selected value.
+ * @param {function} [props.onSelect] - Callback function when an option is selected.
+ * @returns {JSX.Element} The rendered Dropdown component.
+ */
+const Dropdown = ({ label, placeholder = "Select an option", options = [], width, height, error, disabled, value, onSelect }) => {
+  const [selectedValue, setSelectedValue] = useState(null);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const displayedValue = value !== undefined ? value : selectedValue;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -109,12 +154,26 @@ const Dropdown = ({
       {label && <Label isVisible={true} error={error}>{label}</Label>}
       <DropdownContainer disabled={disabled} onClick={() => !disabled && setIsOpen(!isOpen)}>
         <SelectedValue isFocused={isOpen} disabled={disabled} error={error}>
-          {value ? options.find(opt => opt.value === value)?.label : placeholder}
+          {displayedValue ? options.find(opt => opt.value === displayedValue)?.label : placeholder}
         </SelectedValue>
         <ArrowIcon disabled={disabled}>
           {isOpen ? <ArrowUp color={disabled ? "#CCD2D4" : "#334A54"} /> : <ArrowDown color={disabled ? "#CCD2D4" : "#334A54"} />}
         </ArrowIcon>
       </DropdownContainer>
+      {isOpen && (
+        <DropdownList>
+          {options.map((option) => (
+            <DropdownItem key={option.value} selected={option.value === selectedValue} onClick={() => { 
+              setSelectedValue(option.value); 
+              setIsOpen(false); 
+              if (onSelect) onSelect(option.value); 
+            }}>
+              {option.label}
+              {option.value === displayedValue && <CheckIcon />}
+            </DropdownItem>
+          ))}
+        </DropdownList>
+      )}
       {error && <ErrorMessage>Error message</ErrorMessage>}
     </DropdownWrapper>
   );

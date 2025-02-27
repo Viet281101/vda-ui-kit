@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Dropdown from "../components/Dropdown";
 import "../styles/dropdownPage.scss";
 
@@ -8,8 +8,6 @@ const DropdownPage = () => {
     { value: "option2", label: "Option 2" },
     { value: "option3", label: "Option 3" }
   ];
-
-  const [selectedValue, setSelectedValue] = useState(null);
 
   return (
     <div className="dropdown-page">
@@ -25,25 +23,25 @@ const DropdownPage = () => {
           {/* Default State */}
           <tr>
             <td>Default</td>
-            <td><Dropdown label="Dropdown" options={options} value={selectedValue} onChange={setSelectedValue} /></td>
+            <td><Dropdown options={options} /></td>
           </tr>
 
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><Dropdown label="Dropdown" options={options} value={selectedValue} onChange={setSelectedValue} /></td>
+            <td><Dropdown label="Dropdown" options={options} /></td>
           </tr>
 
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><Dropdown label="Dropdown" options={options} value="option2" onChange={setSelectedValue} /></td>
+            <td><Dropdown label="Dropdown" options={options} /></td>
           </tr>
 
           {/* Error State */}
           <tr>
             <td>Error</td>
-            <td><Dropdown label="Dropdown" options={options} value={selectedValue} onChange={setSelectedValue} error={true} /></td>
+            <td><Dropdown label="Dropdown" options={options} error={true} /></td>
           </tr>
 
           {/* Disabled State */}
