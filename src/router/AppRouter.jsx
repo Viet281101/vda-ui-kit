@@ -9,6 +9,7 @@ import TextInputPage from "../pages/TextInputPage";
 import PasswordPage from "../pages/PasswordPage";
 import SearchPage from "../pages/SearchPage";
 import DropdownPage from "../pages/DropdownPage";
+import ChipsPage from "../pages/ChipsPage";
 import DropdownChipsPage from "../pages/DropdownChipsPage";
 import DatePickerPage from "../pages/DatePickerPage";
 import TimePickerPage from "../pages/TimePickerPage";
@@ -84,6 +85,7 @@ const AppRouter = () => {
           <NavItem to="/password">Password</NavItem>
           <NavItem to="/search">Searchbar</NavItem>
           <NavItem to="/dropdown">Dropdown</NavItem>
+          <NavItem to="/chips">Chips</NavItem>
           <NavItem to="/dropdown-chips">Dropdown + Chips</NavItem>
           <NavItem to="/date-picker">Date Picker</NavItem>
           <NavItem to="/time-picker">Time Picker</NavItem>
@@ -104,6 +106,7 @@ const AppRouter = () => {
         <Route path="/password" element={<PasswordPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/dropdown" element={<DropdownPage />} />
+        <Route path="/chips" element={<ChipsPage />} />
         <Route path="/dropdown-chips" element={<DropdownChipsPage />} />
         <Route path="/date-picker" element={<DatePickerPage />} />
         <Route path="/time-picker" element={<TimePickerPage />} />

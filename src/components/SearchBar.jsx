@@ -57,13 +57,12 @@ const SearchIconWrapper = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   user-select: none;
-  
   svg {
-    width: 18px;
-    height: 18px;
+    width: 17.58px;
+    height: 17.58px;
     fill: ${({ disabled }) => (disabled ? "#CCD2D4" : "#334A54")};
   }
 `;
