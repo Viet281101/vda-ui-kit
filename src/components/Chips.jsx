@@ -25,7 +25,6 @@ const ChipWrapper = styled.div`
     return "1px solid #001D29";
   }};
   color: ${({ state }) => (state === "disabled" ? "#66777E" : "#001D29")};
-  margin: 4px;
   font-family: Roboto, sans-serif;
   font-size: ${({ textSize }) => textSize};
   font-weight: 400;

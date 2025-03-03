@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import Chip from "./Chips";
 
 const DropdownWrapper = styled.div`
   display: flex;
@@ -34,6 +35,7 @@ const SelectedValue = styled.div`
   height: 19px;
   padding: 12px 16px;
   padding-right: 40px;
+  gap: 4px;
   border: 1px solid ${({ isFocused, disabled, error }) => 
     disabled ? "#E1E8ED" : 
     error ? "#E71D36" : 
@@ -121,11 +123,10 @@ const ArrowUp = ({ color = "#334A54" }) => (
   </svg>
 );
 
-const Dropdown = ({ label, placeholder = "Select an option", options = [], width, height, error, disabled, value, onSelect }) => {
-  const [selectedValue, setSelectedValue] = useState(null);
+const Dropdown = ({ label, placeholder = "Select an option", options = [], width, height, error, disabled, value, onSelect, chips = false }) => {
+  const [selectedValues, setSelectedValues] = useState(chips ? [] : null);
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const displayedValue = value !== undefined ? value : selectedValue;
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -139,12 +140,37 @@ const Dropdown = ({ label, placeholder = "Select an option", options = [], width
     };
   }, []);
 
+  const handleSelect = (selectedValue) => {
+    setSelectedValues((prevValues) => {
+      if (chips) {
+        return prevValues.includes(selectedValue)
+          ? prevValues.filter((val) => val !== selectedValue)
+          : [...prevValues, selectedValue];
+      } else {
+        return selectedValue;
+      }
+    });
+    if (!chips) setIsOpen(false);
+  };
+
+  const handleDeleteChip = (chipValue) => {
+    setSelectedValues((prevValues) => prevValues.filter((val) => val !== chipValue));
+  };
+
   return (
     <DropdownWrapper width={width} height={height} ref={dropdownRef}>
       {label && <Label isVisible={true} error={error}>{label}</Label>}
       <DropdownContainer disabled={disabled} onClick={() => !disabled && setIsOpen(!isOpen)}>
         <SelectedValue isFocused={isOpen} disabled={disabled} error={error}>
-          {displayedValue ? options.find(opt => opt.value === displayedValue)?.label : placeholder}
+          {chips ? (
+            selectedValues.length > 0 ? (
+              selectedValues.map((val) => (
+                <Chip key={val} label={options.find(opt => opt.value === val)?.label || val} type="Outlined" showLeftIcon={false} autoResize={true} onDelete={() => handleDeleteChip(val)} />
+              ))
+            ) : placeholder
+          ) : (
+            selectedValues ? options.find(opt => opt.value === selectedValues)?.label : placeholder
+          )}
         </SelectedValue>
         <ArrowIcon disabled={disabled}>
           {isOpen ? <ArrowUp color={disabled ? "#CCD2D4" : "#334A54"} /> : <ArrowDown color={disabled ? "#CCD2D4" : "#334A54"} />}
@@ -153,13 +179,13 @@ const Dropdown = ({ label, placeholder = "Select an option", options = [], width
       {isOpen && (
         <DropdownList error={error}>
           {options.map((option) => (
-            <DropdownItem key={option.value} selected={option.value === selectedValue} onClick={() => { 
-              setSelectedValue(option.value); 
-              setIsOpen(false); 
-              if (onSelect) onSelect(option.value); 
-            }}>
+            <DropdownItem 
+              key={option.value} 
+              selected={chips ? selectedValues.includes(option.value) : selectedValues === option.value}
+              onClick={() => handleSelect(option.value)}
+            >
               {option.label}
-              {option.value === displayedValue && <CheckIcon />}
+              {(chips ? selectedValues.includes(option.value) : selectedValues === option.value) && <CheckIcon />}
             </DropdownItem>
           ))}
         </DropdownList>
