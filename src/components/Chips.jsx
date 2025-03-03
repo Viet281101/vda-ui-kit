@@ -90,12 +90,21 @@ const Chip = ({
       width={width} 
       height={height} 
       showText={showText}
-      onClick={state !== "disabled" ? onDelete : null} 
       style={{ color }}
     >
       {showLeftIcon && <PlusIcon />}
       {showText && label}
-      {showRightIcon && <CloseIcon />}
+      {showRightIcon && (
+        <div 
+          style={{ cursor: state === "disabled" ? "not-allowed" : "pointer" }} 
+          onClick={(e) => {
+            e.stopPropagation();
+            if (onDelete && state !== "disabled") onDelete();
+          }}
+        >
+          <CloseIcon />
+        </div>
+      )}
     </ChipWrapper>
   );
 };
