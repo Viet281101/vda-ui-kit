@@ -21,7 +21,7 @@ const ChipsPage = () => {
           {/* ROW 1: FILLED CHIPS */}
           <tr>
             <td>Filled</td>
-            <td><Chip label="Chip" state="template" /></td>
+            <td><Chip label="Chip" showText={true} showLeftIcon={true} showRightIcon={true} state="template" /></td>
             <td><Chip label="Chip" state="default" /></td>
             <td><Chip label="Chip" state="hover" /></td>
             <td><Chip label="Chip" state="active" /></td>

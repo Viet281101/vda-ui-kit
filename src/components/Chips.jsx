@@ -4,10 +4,11 @@ import styled from "styled-components";
 const ChipWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: ${({ showText }) => (showText ? "space-between" : "center")};
   gap: 6px;
   padding: 4px 6px;
-  width: 77px;
-  height: 22px;
+  width: 65px;
+  height: 14px;
   border-radius: 8px;
   background: ${({ state }) => state === ("disabled") ? "#EFF3F4" : "#F7FBFC"};
   color: ${({ state }) => (state === "disabled" ? "#66777E" : "#001D29")};
@@ -38,12 +39,20 @@ const CloseIcon = () => (
   </svg>
 );
 
-const Chip = ({ label = "Chip", state = "default", onDelete }) => {
+const Chip = ({ 
+  label = "Chip", 
+  state = "default", 
+  showLeftIcon = true, 
+  showRightIcon = true, 
+  showText = true, 
+  color = "black", 
+  onDelete 
+}) => {
   return (
-    <ChipWrapper state={state} onClick={state !== "disabled" ? onDelete : null}>
-      <PlusIcon />
-      {label}
-      <CloseIcon />
+    <ChipWrapper state={state} onClick={state !== "disabled" ? onDelete : null} style={{ color }}>
+      {showLeftIcon && <PlusIcon />}
+      {showText && label}
+      {showRightIcon && <CloseIcon />}
     </ChipWrapper>
   );
 };
