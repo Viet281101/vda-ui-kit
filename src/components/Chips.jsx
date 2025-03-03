@@ -81,11 +81,10 @@ const Chip = ({
   showLeftIcon = true, 
   showRightIcon = true, 
   showText = true, 
-  color = "black", 
   onDelete 
 }) => {
   return (
-    <ChipWrapper state={state} type={type} width={width} height={height} autoResize={autoResize} textSize={textSize} showText={showText} style={{ color }} >
+    <ChipWrapper state={state} type={type} width={width} height={height} autoResize={autoResize} textSize={textSize} showText={showText} >
       {showLeftIcon && (<div style={{minWidth: "14px", minHeight: "14px"}} ><PlusIcon /></div>)}
       {showText && label}
       {showRightIcon && (

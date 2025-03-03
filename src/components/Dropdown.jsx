@@ -32,7 +32,7 @@ const DropdownContainer = styled.div`
 
 const SelectedValue = styled.div`
   width: 329px;
-  height: 19px;
+  min-height: 19px;
   padding: 12px 16px;
   padding-right: 40px;
   gap: 4px;
@@ -48,6 +48,8 @@ const SelectedValue = styled.div`
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  overflow-y: auto;
   user-select: none;
 `;
 
@@ -124,7 +126,10 @@ const ArrowUp = ({ color = "#334A54" }) => (
 );
 
 const Dropdown = ({ label, placeholder = "Select an option", options = [], width, height, error, disabled, value, onSelect, chips = false }) => {
-  const [selectedValues, setSelectedValues] = useState(chips ? [] : null);
+  const [selectedValues, setSelectedValues] = useState(() => {
+    if (chips) return Array.isArray(value) ? value : [];
+    return value || null;
+  });
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -140,7 +145,14 @@ const Dropdown = ({ label, placeholder = "Select an option", options = [], width
     };
   }, []);
 
+  useEffect(() => {
+    if (value !== undefined) {
+      setSelectedValues(chips ? (Array.isArray(value) ? value : []) : value);
+    }
+  }, [value, chips]);
+
   const handleSelect = (selectedValue) => {
+    if (disabled) return;
     setSelectedValues((prevValues) => {
       if (chips) {
         return prevValues.includes(selectedValue)
@@ -165,7 +177,7 @@ const Dropdown = ({ label, placeholder = "Select an option", options = [], width
           {chips ? (
             selectedValues.length > 0 ? (
               selectedValues.map((val) => (
-                <Chip key={val} label={options.find(opt => opt.value === val)?.label || val} type="Outlined" showLeftIcon={false} autoResize={true} onDelete={() => handleDeleteChip(val)} />
+                <Chip key={val} label={options.find(opt => opt.value === val)?.label || val} type="Outlined" showLeftIcon={false} autoResize={true} state={disabled ? "disabled" : "default"} onDelete={disabled ? null : () => handleDeleteChip(val)} />
               ))
             ) : placeholder
           ) : (
