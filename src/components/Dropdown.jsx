@@ -184,7 +184,7 @@ const Dropdown = ({ label, placeholder = "Select an option", options = [], width
             selectedValues ? options.find(opt => opt.value === selectedValues)?.label : placeholder
           )}
         </SelectedValue>
-        <ArrowIcon disabled={disabled}>
+        <ArrowIcon disabled={disabled} className="arrow-icon" style={{ width: "24px", height: "24px", alignItems: "center", justifyContent: "center", display: "flex" }}>
           {isOpen ? <ArrowUp color={disabled ? "#CCD2D4" : "#334A54"} /> : <ArrowDown color={disabled ? "#CCD2D4" : "#334A54"} />}
         </ArrowIcon>
       </DropdownContainer>
