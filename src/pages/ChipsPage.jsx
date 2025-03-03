@@ -21,11 +21,20 @@ const ChipsPage = () => {
           {/* ROW 1: FILLED CHIPS */}
           <tr>
             <td>Filled</td>
-            <td><Chip label="Chip" showText={true} showLeftIcon={true} showRightIcon={true} state="template" /></td>
-            <td><Chip label="Chip" state="default" /></td>
-            <td><Chip label="Chip" state="hover" /></td>
-            <td><Chip label="Chip" state="active" /></td>
-            <td><Chip label="Chip" state="disabled" /></td>
+            <td><Chip type="Filled" label="Chip" showText={true} showLeftIcon={true} showRightIcon={true} state="template" /></td>
+            <td><Chip type="Filled" label="Chip" state="default" /></td>
+            <td><Chip type="Filled" label="Chip" state="hover" /></td>
+            <td><Chip type="Filled" label="Chip" state="active" /></td>
+            <td><Chip type="Filled" label="Chip" state="disabled" /></td>
+          </tr>
+          {/* ROW 2: OUTLINED CHIPS */}
+          <tr>
+            <td>Outlined</td>
+            <td><Chip type="Outlined" label="Chip" showText={true} showLeftIcon={true} showRightIcon={true} state="template" /></td>
+            <td><Chip type="Outlined" label="Chip" state="default" /></td>
+            <td><Chip type="Outlined" label="Chip" state="hover" /></td>
+            <td><Chip type="Outlined" label="Chip" state="active" /></td>
+            <td><Chip type="Outlined" label="Chip" state="disabled" /></td>
           </tr>
         </tbody>
       </table>

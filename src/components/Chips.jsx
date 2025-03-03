@@ -7,10 +7,24 @@ const ChipWrapper = styled.div`
   justify-content: ${({ showText }) => (showText ? "space-between" : "center")};
   gap: 6px;
   padding: 4px 6px;
-  width: 65px;
-  height: 14px;
+  width: ${({ width, type }) => 
+    type === "Outlined" ? `calc(${width} - 14px)` : `calc(${width} - 12px)`}; 
+  height: ${({ height, type }) => 
+    type === "Outlined" ? `calc(${height} - 10px)` : `calc(${height} - 8px)`}; 
   border-radius: 8px;
-  background: ${({ state }) => state === ("disabled") ? "#EFF3F4" : "#F7FBFC"};
+  background: ${({ type, state }) => {
+    if (type === "Outlined") return "transparent";
+    if (state === "disabled") return "#EFF3F4";
+    if (state === "hover" || state === "active") return "#EFF3F4";
+    return "#F7FBFC";
+  }};
+  border: ${({ type, state }) => {
+    if (type === "Filled") return "none";
+    if (state === "disabled") return "1px solid #E5E9EA";
+    if (state === "active") return "1px solid #66777E";
+    if (state === "hover") return "1px solid #334A54";
+    return "1px solid #001D29";
+  }};
   color: ${({ state }) => (state === "disabled" ? "#66777E" : "#001D29")};
   font-family: Roboto, sans-serif;
   font-size: 12px;
@@ -20,10 +34,28 @@ const ChipWrapper = styled.div`
   text-align: center;
   cursor: ${({ state }) => (state === "disabled" ? "not-allowed" : "pointer")};
   &:hover {
-    background: ${({ state }) => (state === "disabled" ? "#EFF3F4" : "#EFF3F4")};
+    background: ${({ type, state }) => {
+      if (state === "disabled") return "transparent";
+      if (type === "Outlined") return "transparent";
+      return "#EFF3F4";
+    }};
+    border: ${({ type, state }) => {
+      if (type === "Filled") return "none";
+      if (state === "disabled") return "1px solid #E5E9EA";
+      return "1px solid #334A54";
+    }};
   }
   &:active {
-    background: ${({ state }) => (state === "disabled" ? "#EFF3F4" : "#EFF3F4")};
+    background: ${({ type, state }) => {
+      if (state === "disabled") return "transparent";
+      if (type === "Outlined") return "transparent";
+      return "#EFF3F4";
+    }};
+    border: ${({ type, state }) => {
+      if (type === "Filled") return "none";
+      if (state === "disabled") return "1px solid #E5E9EA";
+      return "1px solid #66777E";
+    }};
   }
 `;
 
@@ -39,8 +71,11 @@ const CloseIcon = () => (
   </svg>
 );
 
-const Chip = ({ 
+const Chip = ({
+  width = "77px",  
+  height = "22px", 
   label = "Chip", 
+  type = "Filled",
   state = "default", 
   showLeftIcon = true, 
   showRightIcon = true, 
@@ -49,7 +84,15 @@ const Chip = ({
   onDelete 
 }) => {
   return (
-    <ChipWrapper state={state} onClick={state !== "disabled" ? onDelete : null} style={{ color }}>
+    <ChipWrapper 
+      state={state} 
+      type={type}
+      width={width} 
+      height={height} 
+      showText={showText}
+      onClick={state !== "disabled" ? onDelete : null} 
+      style={{ color }}
+    >
       {showLeftIcon && <PlusIcon />}
       {showText && label}
       {showRightIcon && <CloseIcon />}
