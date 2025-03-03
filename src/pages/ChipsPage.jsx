@@ -50,16 +50,17 @@ const ChipsPage = () => {
           {/* ROW 3: TEST DELETE CHIP */}
           <tr>
             <td>Deletable Chips</td>
-            <td colSpan="5">
+            <td colSpan="1">
               {chips.length > 0 ? (
                 chips.map((chip) => (
                   <Chip 
                     key={chip.id}
                     type={chip.type}
                     label={chip.label}
-                    width="80px"
+                    autoResize={true}
+                    textSize="12px"
                     showText={true}
-                    showLeftIcon={true}
+                    showLeftIcon={false}
                     showRightIcon={true}
                     onDelete={() => handleDelete(chip.id)}
                   />

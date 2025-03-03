@@ -76,7 +76,7 @@ const DropdownList = styled.ul`
   border: 1px solid #C4CDD5;
   border-radius: 8px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  margin-top: ${({ error}) => (error ? "-18px" : "0")};
+  margin-top: ${({ error }) => (error ? "-18px" : "0")};
   padding: 8px 0;
   list-style: none;
   max-height: 200px;
@@ -121,21 +121,6 @@ const ArrowUp = ({ color = "#334A54" }) => (
   </svg>
 );
 
-/**
- * Dropdown component renders a customizable dropdown menu.
- *
- * @param {Object} props - The properties object.
- * @param {string} props.label - The label for the dropdown.
- * @param {string} [props.placeholder="Select an option"] - The placeholder text when no option is selected.
- * @param {Array} props.options - The list of options to display in the dropdown.
- * @param {string} [props.width] - The width of the dropdown.
- * @param {string} [props.height] - The height of the dropdown.
- * @param {boolean} [props.error] - Indicates if there is an error.
- * @param {boolean} [props.disabled] - Indicates if the dropdown is disabled.
- * @param {string} [props.value] - The currently selected value.
- * @param {function} [props.onSelect] - Callback function when an option is selected.
- * @returns {JSX.Element} The rendered Dropdown component.
- */
 const Dropdown = ({ label, placeholder = "Select an option", options = [], width, height, error, disabled, value, onSelect }) => {
   const [selectedValue, setSelectedValue] = useState(null);
   const [isOpen, setIsOpen] = useState(false);

@@ -7,10 +7,9 @@ const ChipWrapper = styled.div`
   justify-content: ${({ showText }) => (showText ? "space-between" : "center")};
   gap: 6px;
   padding: 4px 6px;
-  width: ${({ width, type }) => 
-    type === "Outlined" ? `calc(${width} - 14px)` : `calc(${width} - 12px)`}; 
-  height: ${({ height, type }) => 
-    type === "Outlined" ? `calc(${height} - 10px)` : `calc(${height} - 8px)`}; 
+  min-width: ${({ autoResize, type, width }) => (autoResize ? "auto" : type === "Outlined" ? `calc(${width} - 14px)` : `calc(${width} - 12px)`)};
+  max-width: ${({ autoResize, type, width }) => (autoResize ? "max-content" : type === "Outlined" ? `calc(${width} - 14px)` : `calc(${width} - 12px)`)};
+  height: ${({ autoResize, type, height }) => (autoResize ? "auto" : type === "Outlined" ? `calc(${height} - 10px)` : `calc(${height} - 8px)`)};
   border-radius: 8px;
   background: ${({ type, state }) => {
     if (type === "Outlined") return "transparent";
@@ -26,8 +25,9 @@ const ChipWrapper = styled.div`
     return "1px solid #001D29";
   }};
   color: ${({ state }) => (state === "disabled" ? "#66777E" : "#001D29")};
+  margin: 4px;
   font-family: Roboto, sans-serif;
-  font-size: 12px;
+  font-size: ${({ textSize }) => textSize};
   font-weight: 400;
   line-height: 14px;
   letter-spacing: 0%;
@@ -74,6 +74,8 @@ const CloseIcon = () => (
 const Chip = ({
   width = "77px",  
   height = "22px", 
+  autoResize = false,
+  textSize = "12px",
   label = "Chip", 
   type = "Filled",
   state = "default", 
@@ -84,19 +86,12 @@ const Chip = ({
   onDelete 
 }) => {
   return (
-    <ChipWrapper 
-      state={state} 
-      type={type}
-      width={width} 
-      height={height} 
-      showText={showText}
-      style={{ color }}
-    >
-      {showLeftIcon && <PlusIcon />}
+    <ChipWrapper state={state} type={type} width={width} height={height} autoResize={autoResize} textSize={textSize} showText={showText} style={{ color }} >
+      {showLeftIcon && (<div style={{minWidth: "14px", minHeight: "14px"}} ><PlusIcon /></div>)}
       {showText && label}
       {showRightIcon && (
         <div 
-          style={{ cursor: state === "disabled" ? "not-allowed" : "pointer" }} 
+          style={{ cursor: state === "disabled" ? "not-allowed" : "pointer", minWidth: "14px", minHeight: "14px" }} 
           onClick={(e) => {
             e.stopPropagation();
             if (onDelete && state !== "disabled") onDelete();
