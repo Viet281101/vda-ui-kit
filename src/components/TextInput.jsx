@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import IMask from "imask";
 
 const InputWrapper = styled.div`
   display: flex;
@@ -26,26 +27,47 @@ const InputContainer = styled.div`
   display: flex;
   align-items: center;
   position: relative;
+  border: 1px solid ${({ isFocused, disabled, error }) => 
+    disabled ? "#E1E8ED" : 
+    error ? "#E71D36" : 
+    isFocused ? "#001D29" : "#C4CDD5"};
+  border-radius: 12px;
+  background: ${({ disabled }) => (disabled ? "#F7FBFC" : "#FFFFFF")};
+  transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
+`;
+
+const PrefixInput = styled.div`
+  width: 28px;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  padding: 12px 8px 12px 16px;
+  gap: 8px;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18.75px;
+  letter-spacing: 0%;
+  color: ${({ disabled }) => (disabled ? "#66777E" : "#334A54")};
+  background: ${({ disabled }) => (disabled ? "#EFF3F4" : "#FFFFFF")};
+  border-right: 1px solid ${({ disabled }) => (disabled ? "#E1E8ED" : "#C4CDD5")};
 `;
 
 const InputField = styled.input`
-  width: 329px;
+  width: 309px;
   height: 19px;
   padding: 12px 16px;
-  border: 1px solid ${({ isFocused, disabled, error }) => (disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5")};
-  border-radius: 12px;
-  background: ${({ disabled }) => (disabled ? "#F7FBFC" : "#FFFFFF")};
+  border: none;
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
   font-size: 16px;
+  line-height: 18.75px;
+  letter-spacing: 0%;
   color: ${({ disabled, error }) => (disabled ? "#66777E" : error ? "#E71D36" : "#334A54")};
+  background: transparent;
   outline: none;
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
   gap: 8px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
-
-  &:focus {
-    border: ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
-  }
-
   &::placeholder {
     color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
   }
@@ -79,9 +101,12 @@ const TextInput = ({
   error = false,
   errorMessage = "Error message",
   disabled = false,
-  defaultValue = ""
+  defaultValue = "",
+  phoneMask = false,
+  phoneFormat = "000-000-000",
+  prefix = "+19"
 }) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
 
@@ -92,6 +117,16 @@ const TextInput = ({
     }
   }, [alwaysFocused]);
 
+  useEffect(() => {
+    if (phoneMask && inputRef.current) {
+      const mask = IMask(inputRef.current, {
+        mask: phoneFormat,
+        lazy: false
+      });
+      return () => mask.destroy();
+    }
+  }, [phoneMask, phoneFormat]);
+
   return (
     <InputWrapper width={width} height={height}>
       {label && (
@@ -99,7 +134,8 @@ const TextInput = ({
           {label}
         </Label>
       )}
-      <InputContainer>
+      <InputContainer isFocused={isFocused} disabled={disabled} error={error}>
+        {phoneMask && <PrefixInput disabled={disabled}>{prefix}</PrefixInput>}
         <InputField 
           ref={inputRef}
           placeholder={placeholder} 
@@ -108,15 +144,14 @@ const TextInput = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => !alwaysFocused && setIsFocused(false)}
           maxLength={maxLength}
-          isFocused={isFocused}
           error={error}
           disabled={disabled}
         />
       </InputContainer>
-      {(error || showCounter) && (
+      {(error || (showCounter && !phoneMask)) && (
         <CounterWrapper>
           {error ? <ErrorMessage>{errorMessage}</ErrorMessage> : <span></span>} 
-          {showCounter && <CounterLabel>{`${inputValue.length} / ${maxLength}`}</CounterLabel>}
+          {showCounter && !phoneMask && <CounterLabel>{`${inputValue.length} / ${maxLength}`}</CounterLabel>}
         </CounterWrapper>
       )}
     </InputWrapper>
