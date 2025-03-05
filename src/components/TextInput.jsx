@@ -109,6 +109,7 @@ const TextInput = ({
   const [inputValue, setInputValue] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
+  const maskRef = useRef(null);
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
@@ -119,13 +120,54 @@ const TextInput = ({
 
   useEffect(() => {
     if (phoneMask && inputRef.current) {
-      const mask = IMask(inputRef.current, {
+      maskRef.current = IMask(inputRef.current, {
         mask: phoneFormat,
-        lazy: false
+        lazy: false,
       });
-      return () => mask.destroy();
+
+      maskRef.current.on("accept", () => {
+        setInputValue(maskRef.current.value);
+      });
+
+      maskRef.current.value = defaultValue;
+      maskRef.current.updateValue();
+
+      return () => {
+        maskRef.current.destroy();
+      };
     }
-  }, [phoneMask, phoneFormat]);
+  }, [phoneMask, phoneFormat, defaultValue]);
+
+  useEffect(() => {
+    if (phoneMask && maskRef.current) {
+      maskRef.current.value = inputValue;
+      maskRef.current.updateValue();
+    }
+  }, [inputValue]);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    if (phoneMask && maskRef.current) {
+      maskRef.current.updateValue();
+    }
+  };
+
+  const handleBlur = () => {
+    if (!alwaysFocused) {
+      setIsFocused(false);
+    }
+    if (phoneMask && maskRef.current) {
+      maskRef.current.updateValue();
+    }
+  };
+
+  const handleInputChange = (e) => {
+    if (phoneMask) {
+      setInputValue(maskRef.current.value);
+    } else {
+      setInputValue(e.target.value);
+    }
+  };
 
   return (
     <InputWrapper width={width} height={height}>
@@ -140,9 +182,9 @@ const TextInput = ({
           ref={inputRef}
           placeholder={placeholder} 
           value={disabled ? defaultValue : inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => !alwaysFocused && setIsFocused(false)}
+          onChange={handleInputChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           maxLength={maxLength}
           error={error}
           disabled={disabled}
