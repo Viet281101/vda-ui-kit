@@ -58,8 +58,8 @@ const TextInputPage = () => {
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><TextInput label="Label" placeholder="Text Input" alwaysShowLabel={true} disabled={true} defaultValue="Text Input" /></td>
-            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysShowLabel={true} disabled={true} defaultValue="Text Input" /></td>
+            <td><TextInput label="Label" placeholder="Text Input" alwaysShowLabel={true} disabled={true} defaultValue="Hello" /></td>
+            <td><TextInput label="Label" placeholder="Text Input" showCounter={true} alwaysShowLabel={true} disabled={true} defaultValue="Hi" /></td>
           </tr>
         </tbody>
       </table>

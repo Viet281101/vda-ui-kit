@@ -138,13 +138,6 @@ const TextInput = ({
     }
   }, [phoneMask, phoneFormat, defaultValue]);
 
-  useEffect(() => {
-    if (phoneMask && maskRef.current) {
-      maskRef.current.value = inputValue;
-      maskRef.current.updateValue();
-    }
-  }, [inputValue]);
-
   const handleFocus = () => {
     setIsFocused(true);
     if (phoneMask && maskRef.current) {
