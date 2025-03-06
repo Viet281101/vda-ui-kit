@@ -7,6 +7,15 @@ const InputWrapper = styled.div`
   gap: 4px;
   width: ${({ width }) => width || "361px"};
   height: ${({ height }) => height};
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
 `;
 
 const Label = styled.label`
@@ -67,6 +76,42 @@ const ErrorMessage = styled.span`
   color: #E71D36;
 `;
 
+const ArrowContainer = styled.div`
+  display: ${({ isVisible }) => (isVisible ? "flex" : "none")};
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 1px solid #CCD2D4;
+`;
+
+const ArrowButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 21px;
+  height: 22.5px;
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+const ArrowUp = () => (
+  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.625 1.54525L0.858625 5.31163C0.759292 5.41096 0.641042 5.45933 0.503875 5.45675C0.366708 5.45417 0.248416 5.40321 0.149 5.30387C0.0496665 5.20454 0 5.08629 0 4.94912C0 4.81196 0.0496665 4.69367 0.149 4.59425L3.98463 0.766375C4.07504 0.676042 4.17633 0.609083 4.2885 0.5655C4.40067 0.521833 4.51283 0.5 4.625 0.5C4.73717 0.5 4.84933 0.521833 4.9615 0.5655C5.07367 0.609083 5.17496 0.676042 5.26538 0.766375L9.101 4.602C9.20033 4.70133 9.24871 4.81829 9.24613 4.95288C9.24354 5.08754 9.19258 5.20454 9.09325 5.30387C8.99392 5.40321 8.87567 5.45288 8.7385 5.45288C8.60133 5.45288 8.48304 5.40321 8.38363 5.30387L4.625 1.54525Z" fill="#001D29"/>
+  </svg>
+);
+
+const ArrowDown = () => (
+  <svg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M4.625 4.4116L0.858625 0.645223C0.759292 0.54589 0.641042 0.497515 0.503875 0.500098C0.366708 0.502682 0.248416 0.55364 0.149 0.652973C0.0496665 0.752307 0 0.870557 0 1.00772C0 1.14489 0.0496665 1.26318 0.149 1.3626L3.98463 5.19047C4.07504 5.28081 4.17633 5.34776 4.2885 5.39135C4.40067 5.43502 4.51283 5.45685 4.625 5.45685C4.73717 5.45685 4.84933 5.43502 4.9615 5.39135C5.07367 5.34776 5.17496 5.28081 5.26538 5.19047L9.101 1.35485C9.20033 1.25552 9.24871 1.13856 9.24613 1.00397C9.24354 0.869307 9.19258 0.752307 9.09325 0.652973C8.99392 0.55364 8.87567 0.503973 8.7385 0.503973C8.60133 0.503973 8.48304 0.55364 8.38363 0.652973L4.625 4.4116Z" fill="#001D29"/>
+  </svg>
+);
+
 const NumberInput = ({ 
   label,
   placeholder, 
@@ -101,6 +146,7 @@ const NumberInput = ({
       )}
       <InputContainer>
         <InputField 
+          type="number"
           ref={inputRef}
           placeholder={placeholder} 
           value={disabled ? defaultValue : inputValue} 
@@ -113,6 +159,14 @@ const NumberInput = ({
           disabled={disabled}
           defaultValue={defaultValue}
         />
+        <ArrowContainer isVisible={isFocused}>
+          <ArrowButton onClick={() => setInputValue((prev) => (parseInt(prev) + 1 || 0).toString())} style={{ borderBottom: "1px solid #CCD2D4" }}>
+            <ArrowUp />
+          </ArrowButton>
+          <ArrowButton onClick={() => setInputValue((prev) => (parseInt(prev) - 1 || 0).toString())}>
+            <ArrowDown />
+          </ArrowButton>
+        </ArrowContainer>
       </InputContainer>
       {(error || showCounter) && (
         <CounterWrapper>
