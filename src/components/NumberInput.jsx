@@ -18,7 +18,7 @@ const InputWrapper = styled.div`
   }
 `;
 
-const Label = styled.label`
+const LabelFocus = styled.label`
   font-family: Roboto;
   font-weight: 400;
   font-size: 12px;
@@ -38,26 +38,24 @@ const InputContainer = styled.div`
 `;
 
 const InputField = styled.input`
-  width: 329px;
-  height: 19px;
+  flex: 1;
+  width: 100%;
+  height: ${({ height }) => `calc(${height} - 61px)`};
   padding: 12px 16px;
-  border: 1px solid ${({ isFocused, disabled, error }) => (disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5")};
-  border-radius: 12px;
   background: ${({ disabled }) => (disabled ? "#F7FBFC" : "#FFFFFF")};
+  border: 1px solid ${({ isFocused, disabled, error }) => 
+    disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5"};
+
+  border-top-left-radius: ${({ hasLabelLeft }) => (hasLabelLeft ? "0px" : "12px")};
+  border-bottom-left-radius: ${({ hasLabelLeft }) => (hasLabelLeft ? "0px" : "12px")};
+  border-top-right-radius: ${({ hasLabelRight }) => (hasLabelRight ? "0px" : "12px")};
+  border-bottom-right-radius: ${({ hasLabelRight }) => (hasLabelRight ? "0px" : "12px")};
+
   font-size: 16px;
-  color: ${({ disabled, error }) => (disabled ? "#66777E" : error ? "#E71D36" : "#334A54")};
+  color: ${({ disabled, error }) => disabled ? "#66777E" : error ? "#E71D36" : "#334A54"};
   outline: none;
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
-  gap: 8px;
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
-
-  &:focus {
-    border: ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
-  }
-
-  &::placeholder {
-    color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
-  }
+  cursor: ${({ disabled }) => disabled ? "not-allowed" : "text"};
 `;
 
 const ErrorMessage = styled.span`
@@ -105,12 +103,47 @@ const ArrowDown = () => (
   </svg>
 );
 
+const LabelWrapper = styled.div`
+  background: #EFF3F4;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  text-align: center;
+  vertical-align: middle;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  height: calc(${({ height }) => height} - 61px);
+`;
+
+const LabelLeft = styled(LabelWrapper)`
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  border-left: 1px solid #CCD2D4;
+  border-top: 1px solid #CCD2D4;
+  border-bottom: 1px solid #CCD2D4;
+  padding: 12px 16px;
+  gap: 11px;
+`;
+
+const LabelRight = styled(LabelWrapper)`
+  border-top-right-radius: 12px;
+  border-bottom-right-radius: 12px;
+  border-right: 1px solid #CCD2D4;
+  border-top: 1px solid #CCD2D4;
+  border-bottom: 1px solid #CCD2D4;
+  padding: 12px 16px;
+  gap: 11px;
+`;
+
 const NumberInput = ({ 
-  label,
-  placeholder, 
-  width = "361px", 
+  labelFocused,
+  placeholder,
+  width = "361px",
   height = "80px",
-  alwaysShowLabel = false,
+  alwaysShowLabelFocused = false,
   alwaysFocused = false,
   showArrow = false,
   error = false,
@@ -120,6 +153,8 @@ const NumberInput = ({
   customStep = 1,
   minLimit = 0,
   maxLimit = 100,
+  labelLeft = "",
+  labelRight = "",
 }) => {
   const [inputValue, setInputValue] = useState(defaultValue || "");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -151,12 +186,13 @@ const NumberInput = ({
 
   return (
     <InputWrapper width={width} height={height}>
-      {label && (
-        <Label isVisible={isFocused || inputValue.length > 0 || alwaysShowLabel} error={error}>
-          {label}
-        </Label>
+      {labelFocused && (
+        <LabelFocus isVisible={isFocused || inputValue.length > 0 || alwaysShowLabelFocused} error={error}>
+          {labelFocused}
+        </LabelFocus>
       )}
       <InputContainer>
+        {labelLeft && <LabelLeft height={height}>{labelLeft}</LabelLeft>}
         <InputField 
           type="number"
           ref={inputRef}
@@ -168,8 +204,11 @@ const NumberInput = ({
           isFocused={isFocused}
           error={error}
           disabled={disabled}
+          height={height}
+          hasLabelLeft={!!labelLeft}
+          hasLabelRight={!!labelRight}
         />
-        <ArrowContainer isVisible={isFocused || showArrow}>
+        <ArrowContainer isVisible={isFocused || showArrow} hasLabelRight={!!labelRight}>
           <ArrowButton
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => handleArrowClick(customStep)}
@@ -184,6 +223,7 @@ const NumberInput = ({
             <ArrowDown />
           </ArrowButton>
         </ArrowContainer>
+        {labelRight && <LabelRight height={height}>{labelRight}</LabelRight>}
       </InputContainer>
       {error ? <ErrorMessage>{errorMessage}</ErrorMessage> : <span></span>} 
     </InputWrapper>

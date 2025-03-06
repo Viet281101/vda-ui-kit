@@ -27,25 +27,25 @@ const NumberPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><NumberInput label="Number" alwaysFocused ={true} /></td>
+            <td><NumberInput labelFocused="Number" alwaysFocused ={true} /></td>
           </tr>
 
           {/* Label Focused State */}
           <tr>
             <td>Label Focused</td>
-            <td><NumberInput label="Number" /></td>
+            <td><NumberInput labelFocused="Number" placeholder="Number" /></td>
           </tr>
 
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><NumberInput label="Number" alwaysShowLabel={true} /></td>
+            <td><NumberInput labelFocused="Number" alwaysShowLabelFocused={true} /></td>
           </tr>
 
           {/* Error State */}
           <tr>
             <td>Error</td>
-            <td><NumberInput label="Number" alwaysShowLabel={true} defaultValue="0" error={true} showArrow={true} /></td>
+            <td><NumberInput labelFocused="Number" alwaysShowLabelFocused={true} defaultValue="0" error={true} showArrow={true} /></td>
           </tr>
 
           {/* Disabled State */}
@@ -57,19 +57,19 @@ const NumberPage = () => {
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><NumberInput label="Number" alwaysShowLabel={true} defaultValue="0" showArrow={false} disabled/></td>
+            <td><NumberInput labelFocused="Number" alwaysShowLabelFocused={true} defaultValue="0" showArrow={false} disabled/></td>
           </tr>
 
           {/* Min/Max Limit */}
           <tr>
-            <td>Min/Max Limit</td>
-            <td><NumberInput label="Number" minLimit={-100} maxLimit={100} /></td>
+            <td>Min/Max Limit (-100 / 100)</td>
+            <td><NumberInput labelFocused="Number" placeholder="Number" minLimit={-100} maxLimit={100} /></td>
           </tr>
 
           {/* Custom Step */}
           <tr>
             <td>Custom Step (5)</td>
-            <td><NumberInput label="Number" customStep={5} /></td>
+            <td><NumberInput labelFocused="Number" placeholder="Number" customStep={5} /></td>
           </tr>
         </tbody>
       </table>
