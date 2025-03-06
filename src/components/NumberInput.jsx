@@ -117,6 +117,9 @@ const NumberInput = ({
   errorMessage = "Error message",
   disabled = false,
   defaultValue = "",
+  customStep = 1,
+  minLimit = 0,
+  maxLimit = 100,
 }) => {
   const [inputValue, setInputValue] = useState(defaultValue || "");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -129,6 +132,23 @@ const NumberInput = ({
     }
   }, [alwaysFocused]);
 
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    if (value === "" || (Number(value) >= minLimit && Number(value) <= maxLimit)) {
+      setInputValue(value);
+    }
+  };
+
+  const handleArrowClick = (step) => {
+    setInputValue((prev) => {
+      const newValue = Number(prev) + step;
+      if (newValue >= minLimit && newValue <= maxLimit) {
+        return newValue.toString();
+      }
+      return prev;
+    });
+  };
+
   return (
     <InputWrapper width={width} height={height}>
       {label && (
@@ -140,9 +160,9 @@ const NumberInput = ({
         <InputField 
           type="number"
           ref={inputRef}
-          placeholder={placeholder} 
-          value={disabled ? defaultValue : inputValue} 
-          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={placeholder}
+          value={disabled ? defaultValue : inputValue}
+          onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => !alwaysFocused && setIsFocused(false)}
           isFocused={isFocused}
@@ -152,14 +172,14 @@ const NumberInput = ({
         <ArrowContainer isVisible={isFocused || showArrow}>
           <ArrowButton
             onMouseDown={(e) => e.preventDefault()}
-            onClick={() => setInputValue((prev) => (parseInt(prev) + 1 || 0).toString())}
+            onClick={() => handleArrowClick(customStep)}
             disabled={!isFocused}
             style={{ borderBottom: "1px solid #CCD2D4" }}>
             <ArrowUp />
           </ArrowButton>
           <ArrowButton
             onMouseDown={(e) => e.preventDefault()}
-            onClick={() => setInputValue((prev) => (parseInt(prev) - 1 || 0).toString())}
+            onClick={() => handleArrowClick(-customStep)}
             disabled={!isFocused}>
             <ArrowDown />
           </ArrowButton>

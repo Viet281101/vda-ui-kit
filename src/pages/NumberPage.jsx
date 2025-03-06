@@ -63,13 +63,13 @@ const NumberPage = () => {
           {/* Min/Max Limit */}
           <tr>
             <td>Min/Max Limit</td>
-            <td><NumberInput /></td>
+            <td><NumberInput label="Number" minLimit={-100} maxLimit={100} /></td>
           </tr>
 
           {/* Custom Step */}
           <tr>
             <td>Custom Step (5)</td>
-            <td><NumberInput /></td>
+            <td><NumberInput label="Number" customStep={5} /></td>
           </tr>
         </tbody>
       </table>
