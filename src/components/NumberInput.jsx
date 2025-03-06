@@ -60,20 +60,12 @@ const InputField = styled.input`
   }
 `;
 
-const CounterWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px;
-`;
-
-const CounterLabel = styled.span`
-  font-size: 12px;
-  color: #66777E;
-`;
-
 const ErrorMessage = styled.span`
   font-size: 12px;
   color: #E71D36;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
 `;
 
 const ArrowContainer = styled.div`
@@ -84,6 +76,7 @@ const ArrowContainer = styled.div`
   top: 50%;
   transform: translateY(-50%);
   border-left: 1px solid #CCD2D4;
+  pointer-events: ${({ isVisible }) => (isVisible ? "auto" : "none")};
 `;
 
 const ArrowButton = styled.button`
@@ -117,16 +110,15 @@ const NumberInput = ({
   placeholder, 
   width = "361px", 
   height = "80px",
-  showCounter = false, 
-  maxLength = 300,
   alwaysShowLabel = false,
   alwaysFocused = false,
+  showArrow = false,
   error = false,
   errorMessage = "Error message",
   disabled = false,
   defaultValue = "",
 }) => {
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(defaultValue || "");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
 
@@ -153,27 +145,27 @@ const NumberInput = ({
           onChange={(e) => setInputValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => !alwaysFocused && setIsFocused(false)}
-          maxLength={maxLength}
           isFocused={isFocused}
           error={error}
           disabled={disabled}
-          defaultValue={defaultValue}
         />
-        <ArrowContainer isVisible={isFocused}>
-          <ArrowButton onClick={() => setInputValue((prev) => (parseInt(prev) + 1 || 0).toString())} style={{ borderBottom: "1px solid #CCD2D4" }}>
+        <ArrowContainer isVisible={isFocused || showArrow}>
+          <ArrowButton
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setInputValue((prev) => (parseInt(prev) + 1 || 0).toString())}
+            disabled={!isFocused}
+            style={{ borderBottom: "1px solid #CCD2D4" }}>
             <ArrowUp />
           </ArrowButton>
-          <ArrowButton onClick={() => setInputValue((prev) => (parseInt(prev) - 1 || 0).toString())}>
+          <ArrowButton
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => setInputValue((prev) => (parseInt(prev) - 1 || 0).toString())}
+            disabled={!isFocused}>
             <ArrowDown />
           </ArrowButton>
         </ArrowContainer>
       </InputContainer>
-      {(error || showCounter) && (
-        <CounterWrapper>
-          {error ? <ErrorMessage>{errorMessage}</ErrorMessage> : <span></span>} 
-          {showCounter && <CounterLabel>{`${inputValue.length} / ${maxLength}`}</CounterLabel>}
-        </CounterWrapper>
-      )}
+      {error ? <ErrorMessage>{errorMessage}</ErrorMessage> : <span></span>} 
     </InputWrapper>
   );
 };

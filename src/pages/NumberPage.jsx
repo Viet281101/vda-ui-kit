@@ -30,16 +30,34 @@ const NumberPage = () => {
             <td><NumberInput label="Number" alwaysFocused ={true} /></td>
           </tr>
 
+          {/* Label Focused State */}
+          <tr>
+            <td>Label Focused</td>
+            <td><NumberInput label="Number" /></td>
+          </tr>
+
+          {/* Completed State */}
+          <tr>
+            <td>Completed</td>
+            <td><NumberInput label="Number" alwaysShowLabel={true} /></td>
+          </tr>
+
           {/* Error State */}
           <tr>
             <td>Error</td>
-            <td><NumberInput /></td>
+            <td><NumberInput label="Number" alwaysShowLabel={true} defaultValue="0" error={true} showArrow={true} /></td>
           </tr>
 
           {/* Disabled State */}
           <tr>
             <td>Disabled</td>
-            <td><NumberInput /></td>
+            <td><NumberInput placeholder="Number" disabled/></td>
+          </tr>
+
+          {/* Disabled Completed State */}
+          <tr>
+            <td>Disabled Completed</td>
+            <td><NumberInput label="Number" alwaysShowLabel={true} defaultValue="0" showArrow={false} disabled/></td>
           </tr>
 
           {/* Min/Max Limit */}
