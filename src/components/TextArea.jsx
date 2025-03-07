@@ -40,7 +40,7 @@ const TextAreaField = styled.textarea`
   color: ${({ disabled, error }) => disabled ? "#66777E" : error ? "#E71D36" : "#334A54"};
   outline: none;
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
-  resize: none;
+  resize: ${({ resize }) => resize || "both"};
   overflow-y: auto;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
   &:focus {
@@ -73,6 +73,7 @@ const TextArea = ({
   width = "361px", 
   height = "120px",
   autoExpand = false,
+  maxHeight = null,
   showCounter = false, 
   maxLength = 300,
   alwaysShowLabel = false,
@@ -80,7 +81,8 @@ const TextArea = ({
   error = false,
   errorMessage = "Error message",
   disabled = false,
-  defaultValue = ""
+  defaultValue = "",
+  resize = "both"
 }) => {
   const [inputValue, setInputValue] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -96,9 +98,17 @@ const TextArea = ({
   useEffect(() => {
     if (autoExpand && textAreaRef.current) {
       textAreaRef.current.style.height = "auto";
-      textAreaRef.current.style.height = `${textAreaRef.current.scrollHeight}px`;
+      const newHeight = textAreaRef.current.scrollHeight;
+      
+      if (maxHeight && newHeight > maxHeight) {
+        textAreaRef.current.style.height = `${maxHeight}px`;
+        textAreaRef.current.style.overflowY = "auto";
+      } else {
+        textAreaRef.current.style.height = `${newHeight}px`;
+        textAreaRef.current.style.overflowY = "hidden";
+      }
     }
-  }, [inputValue, autoExpand]);
+  }, [inputValue, autoExpand, maxHeight]);
 
   return (
     <InputWrapper width={width} height={height}>
@@ -119,7 +129,9 @@ const TextArea = ({
           isFocused={isFocused}
           error={error}
           disabled={disabled}
+          width={width}
           height={height}
+          resize={resize}
         />
       </InputContainer>
       {(error || showCounter) && (

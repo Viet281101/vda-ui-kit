@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import SignatureArea from "../components/SignatureArea";
+import "../styles/textAreaPage.scss";
 
 const SignatureAreaPage = () => {
   useEffect(() => {
@@ -6,8 +8,53 @@ const SignatureAreaPage = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      Test
+    <div className="text-area-page">
+      <h2>Signature Area</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>State</th>
+            <th>Component</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Default State */}
+          <tr>
+            <td>Default</td>
+            <td><SignatureArea /></td>
+          </tr>
+
+          {/* Focused State */}
+          <tr>
+            <td>Focused</td>
+            <td><SignatureArea label="Sign here" /></td>
+          </tr>
+
+          {/* Completed State */}
+          <tr>
+            <td>Completed</td>
+            <td><SignatureArea label="Sign here" /></td>
+          </tr>
+
+          {/* Error State */}
+          <tr>
+            <td>Error</td>
+            <td><SignatureArea label="Sign here" error={true} /></td>
+          </tr>
+
+          {/* Disabled State */}
+          <tr>
+            <td>Disabled</td>
+            <td><SignatureArea label="Signature Area" disabled={true} /></td>
+          </tr>
+
+          {/* Disabled Completed State */}
+          <tr>
+            <td>Disabled Completed</td>
+            <td><SignatureArea label="Signature Area" disabled={true} /></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
