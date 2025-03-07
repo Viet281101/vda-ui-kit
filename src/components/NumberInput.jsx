@@ -70,10 +70,16 @@ const InputField = styled.input`
   border-bottom-right-radius: ${({ hasLabelRight }) => (hasLabelRight ? "0px" : "12px")};
 
   font-size: 16px;
+  line-height: 18.75px;
+  letter-spacing: 0%;
   color: ${({ disabled, error }) => (disabled ? "#66777E" : error ? "#E71D36" : "#334A54")};
   outline: none;
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
+  gap: 8px;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
+  &::placeholder {
+    color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
+  }
 `;
 
 const ErrorMessage = styled.span`
