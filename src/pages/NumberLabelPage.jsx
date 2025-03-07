@@ -60,16 +60,16 @@ const NumberPage = () => {
             <td><NumberInput defaultValue="0" showArrow={false} labelLeft="Label" labelRight="Label" disabled/></td>
           </tr>
 
-          {/* Min/Max Limit */}
+          {/* Only Label Right */}
           <tr>
-            <td>Min/Max Limit (-100 / 100)</td>
-            <td><NumberInput labelFocused="Number" placeholder="Number" minLimit={-100} maxLimit={100} /></td>
+            <td>Only Label Right</td>
+            <td><NumberInput defaultValue="0" labelRight="Label" /></td>
           </tr>
 
-          {/* Custom Step */}
+          {/* Only Label Left */}
           <tr>
-            <td>Custom Step (5)</td>
-            <td><NumberInput labelFocused="Number" placeholder="Number" customStep={5} /></td>
+            <td>Only Label Left</td>
+            <td><NumberInput defaultValue="0" labelLeft="Label" /></td>
           </tr>
         </tbody>
       </table>

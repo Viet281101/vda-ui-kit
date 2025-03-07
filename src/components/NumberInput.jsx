@@ -50,8 +50,19 @@ const InputField = styled.input`
   height: ${({ height }) => `calc(${height} - 61px)`};
   padding: 12px 16px;
   background: ${({ disabled }) => (disabled ? "#F7FBFC" : "#FFFFFF")};
-  border: 1px solid ${({ isFocused, disabled, error }) => 
-    disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5"};
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: ${({ isFocused, disabled, error, hasLabelLeft, hasLabelRight }) => {
+    if (disabled) return "#E1E8ED";
+    if (error) {
+      if (hasLabelLeft && hasLabelRight) return "#E71D36 #CCD2D4";
+      if (hasLabelLeft) return "#E71D36 #CCD2D4 #E71D36 #E71D36";
+      if (hasLabelRight) return "#E71D36 #E71D36 #E71D36 #CCD2D4";
+      return "#E71D36";
+    }
+    return isFocused ? "#001D29" : "#C4CDD5";
+  }};
 
   border-top-left-radius: ${({ hasLabelLeft }) => (hasLabelLeft ? "0px" : "12px")};
   border-bottom-left-radius: ${({ hasLabelLeft }) => (hasLabelLeft ? "0px" : "12px")};
@@ -59,10 +70,10 @@ const InputField = styled.input`
   border-bottom-right-radius: ${({ hasLabelRight }) => (hasLabelRight ? "0px" : "12px")};
 
   font-size: 16px;
-  color: ${({ disabled, error }) => disabled ? "#66777E" : error ? "#E71D36" : "#334A54"};
+  color: ${({ disabled, error }) => (disabled ? "#66777E" : error ? "#E71D36" : "#334A54")};
   outline: none;
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
-  cursor: ${({ disabled }) => disabled ? "not-allowed" : "text"};
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
 `;
 
 const ErrorMessage = styled.span`
@@ -129,9 +140,9 @@ const LabelWrapper = styled.div`
 const LabelLeft = styled(LabelWrapper)`
   border-top-left-radius: 12px;
   border-bottom-left-radius: 12px;
-  border-left: 1px solid #CCD2D4;
-  border-top: 1px solid #CCD2D4;
-  border-bottom: 1px solid #CCD2D4;
+  border-left: 1px solid ${({ error }) => (error ? "#E71D36" : "#CCD2D4")};
+  border-top: 1px solid ${({ error }) => (error ? "#E71D36" : "#CCD2D4")};
+  border-bottom: 1px solid ${({ error }) => (error ? "#E71D36" : "#CCD2D4")};
   padding: 12px 16px;
   gap: 11px;
 `;
@@ -139,9 +150,9 @@ const LabelLeft = styled(LabelWrapper)`
 const LabelRight = styled(LabelWrapper)`
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
-  border-right: 1px solid #CCD2D4;
-  border-top: 1px solid #CCD2D4;
-  border-bottom: 1px solid #CCD2D4;
+  border-right: 1px solid ${({ error }) => (error ? "#E71D36" : "#CCD2D4")};
+  border-top: 1px solid ${({ error }) => (error ? "#E71D36" : "#CCD2D4")};
+  border-bottom: 1px solid ${({ error }) => (error ? "#E71D36" : "#CCD2D4")};
   padding: 12px 16px;
   gap: 11px;
 `;
@@ -200,7 +211,7 @@ const NumberInput = ({
         </LabelFocus>
       )}
       <InputContainer>
-      {labelLeft && <LabelLeft disabled={disabled} height={height}>{labelLeft}</LabelLeft>}
+      {labelLeft && <LabelLeft disabled={disabled} error={error} height={height}>{labelLeft}</LabelLeft>}
       <InputWrapperInner>
         <InputField 
           type="number"
@@ -233,7 +244,7 @@ const NumberInput = ({
           </ArrowButton>
         </ArrowContainer>
       </InputWrapperInner>
-      {labelRight && <LabelRight disabled={disabled} height={height}>{labelRight}</LabelRight>}
+      {labelRight && <LabelRight disabled={disabled} error={error} height={height}>{labelRight}</LabelRight>}
     </InputContainer>
       {error ? <ErrorMessage>{errorMessage}</ErrorMessage> : <span></span>} 
     </InputWrapper>
