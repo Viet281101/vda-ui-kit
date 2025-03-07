@@ -37,6 +37,13 @@ const InputContainer = styled.div`
   position: relative;
 `;
 
+const InputWrapperInner = styled.div`
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+`;
+
 const InputField = styled.input`
   flex: 1;
   width: 100%;
@@ -116,6 +123,7 @@ const LabelWrapper = styled.div`
   align-items: center;
   white-space: nowrap;
   height: calc(${({ height }) => height} - 61px);
+  cursor: ${({ disabled }) => disabled ? "not-allowed" : "pointer"};
 `;
 
 const LabelLeft = styled(LabelWrapper)`
@@ -192,7 +200,8 @@ const NumberInput = ({
         </LabelFocus>
       )}
       <InputContainer>
-        {labelLeft && <LabelLeft height={height}>{labelLeft}</LabelLeft>}
+      {labelLeft && <LabelLeft disabled={disabled} height={height}>{labelLeft}</LabelLeft>}
+      <InputWrapperInner>
         <InputField 
           type="number"
           ref={inputRef}
@@ -208,7 +217,7 @@ const NumberInput = ({
           hasLabelLeft={!!labelLeft}
           hasLabelRight={!!labelRight}
         />
-        <ArrowContainer isVisible={isFocused || showArrow} hasLabelRight={!!labelRight}>
+        <ArrowContainer isVisible={isFocused || showArrow}>
           <ArrowButton
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => handleArrowClick(customStep)}
@@ -223,8 +232,9 @@ const NumberInput = ({
             <ArrowDown />
           </ArrowButton>
         </ArrowContainer>
-        {labelRight && <LabelRight height={height}>{labelRight}</LabelRight>}
-      </InputContainer>
+      </InputWrapperInner>
+      {labelRight && <LabelRight disabled={disabled} height={height}>{labelRight}</LabelRight>}
+    </InputContainer>
       {error ? <ErrorMessage>{errorMessage}</ErrorMessage> : <span></span>} 
     </InputWrapper>
   );

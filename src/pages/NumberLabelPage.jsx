@@ -27,37 +27,37 @@ const NumberPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><NumberInput labelFocused="Number" alwaysFocused ={true} /></td>
+            <td><NumberInput alwaysFocused ={true} labelLeft="Label" labelRight="Label" /></td>
           </tr>
 
           {/* Label Focused State */}
           <tr>
             <td>Label Focused</td>
-            <td><NumberInput labelFocused="Number" placeholder="Number" /></td>
+            <td><NumberInput placeholder="Number" labelLeft="Label" labelRight="Label" /></td>
           </tr>
 
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><NumberInput labelFocused="Number" alwaysShowLabelFocused={true} /></td>
+            <td><NumberInput defaultValue="0" labelLeft="Label" labelRight="Label" /></td>
           </tr>
 
           {/* Error State */}
           <tr>
             <td>Error</td>
-            <td><NumberInput labelFocused="Number" alwaysShowLabelFocused={true} defaultValue="0" error={true} showArrow={true} /></td>
+            <td><NumberInput defaultValue="0" error={true} showArrow={true} labelLeft="Label" labelRight="Label" /></td>
           </tr>
 
           {/* Disabled State */}
           <tr>
             <td>Disabled</td>
-            <td><NumberInput placeholder="Number" disabled/></td>
+            <td><NumberInput labelLeft="Label" labelRight="Label" disabled/></td>
           </tr>
 
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><NumberInput labelFocused="Number" alwaysShowLabelFocused={true} defaultValue="0" showArrow={false} disabled/></td>
+            <td><NumberInput defaultValue="0" showArrow={false} labelLeft="Label" labelRight="Label" disabled/></td>
           </tr>
 
           {/* Min/Max Limit */}
