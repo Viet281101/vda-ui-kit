@@ -24,7 +24,11 @@ const Label = styled.label`
   font-family: Roboto;
   font-weight: 400;
   font-size: 12px;
-  color: ${({ error }) => (error ? "#E71D36" : "#334A54")};
+  line-height: 14px;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
+  color: ${({ error, disabled }) => (error ? "#E71D36" : disabled ? "#66777E" : "#334A54")};
 `;
 
 const SignatureContainer = styled.div`
@@ -50,7 +54,9 @@ const Placeholder = styled.span`
   position: absolute;
   top: 8px;
   left: 16px;
-  font-size: 14px;
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 400;
   color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   opacity: ${({ isVisible }) => (isVisible ? "1" : "0")};
@@ -63,12 +69,18 @@ const ClearButton = styled.button`
   gap: 4px;
   width: 52px;
   height: 16px;
+  font-family: Roboto;
+  font-weight: 400;
   font-size: 12px;
   line-height: 14px;
+  letter-spacing: 0%;
+  text-align: center;
+  vertical-align: middle;
   color: #001D29;
   background: none;
   border: none;
   cursor: pointer;
+  visibility: ${({ isVisible }) => (isVisible ? "visible" : "hidden")};
 `;
 
 const ErrorMessage = styled.span`
@@ -92,7 +104,7 @@ const Canvas = styled.canvas`
   border-radius: 12px;
   background: transparent;
   touch-action: none;
-  cursor: crosshair;
+  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "crosshair")};
 `;
 
 const SignatureArea = ({ 
@@ -133,10 +145,42 @@ const SignatureArea = ({
     }
   }, [alwaysFocused, signature]);
 
+  const handleSaveSignature = () => {
+    if (!canvasRef.current) return;
+    const ctx = canvasRef.current.getContext("2d");
+
+    if (disabled) {
+      const imageData = ctx.getImageData(0, 0, canvasRef.current.width, canvasRef.current.height);
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        if (imageData.data[i + 3] > 0) {
+          imageData.data[i] = 51;
+          imageData.data[i + 1] = 74;
+          imageData.data[i + 2] = 84;
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+    }
+    setSignature(canvasRef.current.toDataURL("image/png"));
+  };
+
+  useEffect(() => {
+    if (signature && !disabled) {
+      const ctx = canvasRef.current.getContext("2d");
+      const img = new Image();
+      img.src = signature;
+      img.onload = () => ctx.drawImage(img, 0, 0);
+    }
+  }, [disabled, signature]);
+
   const startDrawing = (e) => {
     if (disabled || !isFocused) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
+
+    ctx.lineWidth = 2;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "rgba(0, 29, 41, 0.9)";
 
     ctx.beginPath();
     ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
@@ -155,7 +199,7 @@ const SignatureArea = ({
   const stopDrawing = () => {
     if (!isDrawing) return;
     setIsDrawing(false);
-    setSignature(true);
+    handleSaveSignature();
   };
 
   useEffect(() => {
@@ -168,14 +212,14 @@ const SignatureArea = ({
   return (
     <SignatureWrapper width={width}>
       <LabelRow isVisible={alwaysShowLabel || isFocused || signature}>
-        {label && <Label error={error}>{label}</Label>}
-        <ClearButton isVisible={isFocused && signature} onClick={handleClear}>
+        {label && <Label error={error} disabled={disabled}>{label}</Label>}
+        <ClearButton isVisible={(isFocused || signature) && !disabled} onClick={handleClear}>
           <ClearIcon />Clear
         </ClearButton>
       </LabelRow>
-      <SignatureContainer 
+      <SignatureContainer
         ref={containerRef}
-        width={width} 
+        width={width}
         height={height}
         isFocused={isFocused}
         error={error}
@@ -183,14 +227,18 @@ const SignatureArea = ({
         onClick={() => !disabled && setIsFocused(true)}
       >
         {!signature && <Placeholder error={error} isVisible={!isFocused}>{placeholder}</Placeholder>}
-        <Canvas ref={canvasRef}
-          width={parseInt(width) + 32}
-          height={parseInt(height) + 24}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-        />
+        {disabled && signature ? (
+          <img src={signature} alt="Signature" width="100%" height="100%" style={{ borderRadius: "12px", cursor: "not-allowed" }} />
+        ) : (
+          <Canvas ref={canvasRef} disabled={disabled}
+            width={parseInt(width) + 32}
+            height={parseInt(height) + 24}
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+          />
+        )}
       </SignatureContainer>
       {error && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </SignatureWrapper>
