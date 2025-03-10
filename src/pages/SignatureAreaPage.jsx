@@ -27,7 +27,7 @@ const SignatureAreaPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><SignatureArea label="Sign here" /></td>
+            <td><SignatureArea alwaysFocused label="Sign here" /></td>
           </tr>
 
           {/* Completed State */}
@@ -45,13 +45,13 @@ const SignatureAreaPage = () => {
           {/* Disabled State */}
           <tr>
             <td>Disabled</td>
-            <td><SignatureArea label="Signature Area" disabled={true} /></td>
+            <td><SignatureArea label="Sign here" disabled={true} /></td>
           </tr>
 
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><SignatureArea label="Signature Area" disabled={true} /></td>
+            <td><SignatureArea label="Sign here" disabled={true} /></td>
           </tr>
         </tbody>
       </table>

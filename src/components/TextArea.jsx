@@ -67,14 +67,14 @@ const ErrorMessage = styled.span`
   color: #E71D36;
 `;
 
-const TextArea = ({ 
+const TextArea = ({
   label,
-  placeholder, 
-  width = "361px", 
+  placeholder,
+  width = "361px",
   height = "120px",
   autoExpand = false,
   maxHeight = null,
-  showCounter = false, 
+  showCounter = false,
   maxLength = 300,
   alwaysShowLabel = false,
   alwaysFocused = false,
