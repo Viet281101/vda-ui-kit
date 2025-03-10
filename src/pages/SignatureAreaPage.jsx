@@ -33,7 +33,7 @@ const SignatureAreaPage = () => {
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><SignatureArea label="Sign here" /></td>
+            <td><SignatureArea alwaysShowLabel label="Sign here" /></td>
           </tr>
 
           {/* Error State */}
@@ -51,7 +51,7 @@ const SignatureAreaPage = () => {
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><SignatureArea label="Sign here" disabled={true} /></td>
+            <td><SignatureArea alwaysShowLabel label="Sign here" disabled={true} /></td>
           </tr>
         </tbody>
       </table>

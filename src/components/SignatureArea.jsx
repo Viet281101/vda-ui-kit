@@ -38,7 +38,6 @@ const SignatureContainer = styled.div`
   border-radius: 12px;
   width: ${({ width }) => width || "100%"};
   height: ${({ height }) => height || "110px"};
-  cursor: ${({ disabled }) => (disabled ? "not-allowed" : "pointer")};
   transition: border 0.3s ease-in-out, background 0.3s ease-in-out;
   gap: 10px;
   padding-top: 12px;
@@ -84,11 +83,24 @@ const ClearIcon = () => (
   </svg>
 );
 
+const Canvas = styled.canvas`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: transparent;
+  touch-action: none;
+  cursor: crosshair;
+`;
+
 const SignatureArea = ({ 
   label = "Sign here",
   placeholder = "Signature Area",
   width = "329px",
   height = "110px",
+  alwaysShowLabel = false,
   alwaysFocused = false,
   error = false,
   errorMessage = "Error message",
@@ -97,8 +109,13 @@ const SignatureArea = ({
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const [signature, setSignature] = useState(null);
   const containerRef = useRef(null);
+  const canvasRef = useRef(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   const handleClear = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     setSignature(null);
   };
 
@@ -110,11 +127,36 @@ const SignatureArea = ({
 
   const handleClickOutside = useCallback((event) => {
     if (containerRef.current && !containerRef.current.contains(event.target)) {
-      if (!alwaysFocused) {
+      if (!alwaysFocused && !signature) {
         setIsFocused(false);
       }
     }
-  }, [alwaysFocused]);
+  }, [alwaysFocused, signature]);
+
+  const startDrawing = (e) => {
+    if (disabled || !isFocused) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    ctx.beginPath();
+    ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    setIsDrawing(true);
+  };
+
+  const draw = (e) => {
+    if (!isDrawing || disabled || !isFocused) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+
+    ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+    ctx.stroke();
+  };
+
+  const stopDrawing = () => {
+    if (!isDrawing) return;
+    setIsDrawing(false);
+    setSignature(true);
+  };
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -125,7 +167,7 @@ const SignatureArea = ({
 
   return (
     <SignatureWrapper width={width}>
-      <LabelRow isVisible={isFocused || signature}>
+      <LabelRow isVisible={alwaysShowLabel || isFocused || signature}>
         {label && <Label error={error}>{label}</Label>}
         <ClearButton isVisible={isFocused && signature} onClick={handleClear}>
           <ClearIcon />Clear
@@ -141,6 +183,14 @@ const SignatureArea = ({
         onClick={() => !disabled && setIsFocused(true)}
       >
         {!signature && <Placeholder error={error} isVisible={!isFocused}>{placeholder}</Placeholder>}
+        <Canvas ref={canvasRef}
+          width={parseInt(width) + 32}
+          height={parseInt(height) + 24}
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={stopDrawing}
+          onMouseLeave={stopDrawing}
+        />
       </SignatureContainer>
       {error && <ErrorMessage>{errorMessage}</ErrorMessage>}
     </SignatureWrapper>
