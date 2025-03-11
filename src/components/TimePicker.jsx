@@ -15,7 +15,7 @@ const Label = styled.label`
   font-weight: 400;
   font-size: 12px;
   line-height: 14px;
-  color: #334A54;
+  color: ${({ error }) => (error ? "#E71D36" : "#334A54")};
   padding-left: 16px;
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
   opacity: ${({ isVisible }) => (isVisible ? "1" : "0")};
@@ -34,20 +34,26 @@ const InputField = styled.input`
   height: 19px;
   padding: 12px 16px;
   padding-right: 40px;
-  border: 1px solid ${({ isFocused, disabled }) => (disabled ? "#E1E8ED" : isFocused ? "#001D29" : "#C4CDD5")};
+  border: 1px solid ${({ isFocused, disabled, error }) => (disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5")};
   border-radius: 12px;
   background: ${({ disabled }) => (disabled ? "#F7FBFC" : "#FFFFFF")};
   font-size: 16px;
-  color: #334A54;
+  color: ${({ disabled, error }) => (disabled ? "#66777E" : error ? "#E71D36" : "#334A54")};
   outline: none;
   transition: border 0.3s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
   &:focus {
-    border: 1px solid #001D29;
+    border: 1px solid ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
   }
   &::placeholder {
-    color: #99A4A9;
+    color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
   }
+`;
+
+const ErrorMessage = styled.span`
+  font-size: 12px;
+  color: #E71D36;
+  padding-left: 16px;
 `;
 
 const IconWrapper = styled.span`
@@ -76,7 +82,7 @@ const ClockIcon = ({ color = "#334A54" }) => (
 );
 
 const TimePicker = ({
-  label = "Choose Time",
+  label,
   placeholder = "Choose Time",
   width = "361px",
   height = "80px",
@@ -84,6 +90,7 @@ const TimePicker = ({
   alwaysFocused = false,
   allowManualInput = false,
   disabled = false,
+  error = false,
 }) => {
   const [time, setTime] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -97,7 +104,7 @@ const TimePicker = ({
 
   return (
     <TimePickerWrapper width={width} height={height}>
-      {label && <Label isVisible={isFocused || alwaysShowLabel}>{label}</Label>}
+      {label && <Label isVisible={isFocused || alwaysShowLabel} error={error}>{label}</Label>}
       <InputContainer>
         <InputField
           ref={inputRef}
@@ -108,13 +115,15 @@ const TimePicker = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => !alwaysFocused && setIsFocused(false)}
           disabled={disabled}
+          error={error}
           isFocused={isFocused}
           readOnly={!allowManualInput}
         />
-        <IconWrapper disabled={disabled}>
+        <IconWrapper disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"}>
           <ClockIcon color={disabled ? "#CCD2D4" : "#334A54"} />
         </IconWrapper>
       </InputContainer>
+      {error && <ErrorMessage>Error message</ErrorMessage>}
     </TimePickerWrapper>
   );
 };

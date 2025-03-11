@@ -33,7 +33,7 @@ const TimePickerPage = () => {
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><TimePicker label="Choose Time" alwaysShowLabel={true} /></td>
+            <td><TimePicker label="Choose Time" /></td>
           </tr>
           
           {/* Error State */}

@@ -1,4 +1,6 @@
 import React, { useEffect } from "react";
+import DatePicker from "../components/DatePicker";
+import "../styles/textInputPage.scss";
 
 const DatePickerPage = () => {
   useEffect(() => {
@@ -6,8 +8,53 @@ const DatePickerPage = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      Test
+    <div className="text-input-page">
+      <h2>Date Picker</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>State</th>
+            <th>Component</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Default State */}
+          <tr>
+            <td>Default</td>
+            <td><DatePicker placeholder="Choose Date" /></td>
+          </tr>
+          
+          {/* Focused State */}
+          <tr>
+            <td>Focused</td>
+            <td><DatePicker label="Choose Date" alwaysFocused={true} /></td>
+          </tr>
+          
+          {/* Completed State */}
+          <tr>
+            <td>Completed</td>
+            <td><DatePicker label="Choose Date" /></td>
+          </tr>
+          
+          {/* Error State */}
+          <tr>
+            <td>Error</td>
+            <td><DatePicker label="Choose Date" error={true} /></td>
+          </tr>
+          
+          {/* Disabled State */}
+          <tr>
+            <td>Disabled</td>
+            <td><DatePicker label="Choose Date" disabled={true} /></td>
+          </tr>
+          
+          {/* Disabled Completed State */}
+          <tr>
+            <td>Disabled Completed</td>
+            <td><DatePicker label="Choose Date" disabled={true} /></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };
