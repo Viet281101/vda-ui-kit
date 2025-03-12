@@ -21,7 +21,7 @@ const TimePickerPage = () => {
           {/* Default State */}
           <tr>
             <td>Default</td>
-            <td><TimePicker placeholder="Choose Time" /></td>
+            <td><TimePicker placeholder="Choose Time" allowManualInput /></td>
           </tr>
           
           {/* Focused State */}

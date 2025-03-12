@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import Button from "./Button";
 import styled from "styled-components";
 
 const TimePickerWrapper = styled.div`
@@ -81,6 +82,114 @@ const ClockIcon = ({ color = "#334A54" }) => (
   </svg>
 );
 
+const PopupWrapper = styled.div`
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 170px;
+  height: 278px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #EFF3F4;
+  box-shadow: 0px 9px 28px rgba(0, 29, 41, 0.05);
+  display: ${({ isOpen }) => (isOpen ? "flex" : "none")};
+  flex-direction: column;
+  z-index: 100;
+  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+  transform: ${({ isOpen }) => (isOpen ? "translateY(0)" : "translateY(-10px)")};
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+`;
+
+const ColumnContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const TimeColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 56px;
+  height: 222px;
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  text-align: center;
+  padding: 2px;
+`;
+
+const TimeItem = styled.div`
+  width: 80%;
+  padding: 6px;
+  margin 0 auto;
+  font-size: 14px;
+  text-align: center;
+  color: ${({ isSelected }) => (isSelected ? "#001D29" : "#334A54")};
+  font-weight: ${({ isSelected }) => (isSelected ? "600" : "400")};
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+  &:hover {
+    color: #001D29;
+  }
+`;
+
+const Divider = styled.div`
+  width: 1px;
+  background: #E5E9EA;
+`;
+
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: auto;
+  height: 48px;
+`;
+
+const TimePickerPopup = ({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose }) => {
+  const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+  const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
+  const periods = ["AM", "PM"];
+
+  return (
+    <PopupWrapper isOpen={isOpen}>
+      <ColumnContainer>
+        <TimeColumn>
+          {hours.map((hour) => (
+            <TimeItem key={hour} isSelected={selectedHour === hour} onClick={() => onSelect(hour, "hour")}>
+              {hour}
+            </TimeItem>
+          ))}
+        </TimeColumn>
+        <Divider />
+        <TimeColumn>
+          {minutes.map((minute) => (
+            <TimeItem key={minute} isSelected={selectedMinute === minute} onClick={() => onSelect(minute, "minute")}>
+              {minute}
+            </TimeItem>
+          ))}
+        </TimeColumn>
+        <Divider />
+        <TimeColumn>
+          {periods.map((period) => (
+            <TimeItem key={period} isSelected={selectedPeriod === period} onClick={() => onSelect(period, "period")}>
+              {period}
+            </TimeItem>
+          ))}
+        </TimeColumn>
+      </ColumnContainer>
+      <Footer>
+        <Button type="outline3" style={{ width: "29px", height: "14px", margin: "auto 0", fontWeight: 400 }} onClick={() => onSelect("now")}>Now</Button>
+        <Button type="primary1" style={{ width: "39px", margin: "auto 0" }} onClick={onClose} disabled>OK</Button>
+      </Footer>
+    </PopupWrapper>
+  );
+};
+
 const TimePicker = ({
   label,
   placeholder = "Choose Time",
@@ -94,13 +203,59 @@ const TimePicker = ({
 }) => {
   const [time, setTime] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const inputRef = useRef(null);
+  const popupRef = useRef(null);
+  const [selectedHour, setSelectedHour] = useState("12");
+  const [selectedMinute, setSelectedMinute] = useState("00");
+  const [selectedPeriod, setSelectedPeriod] = useState("AM");
+
+  const togglePopup = () => {
+    if (!disabled) {
+      setIsPopupOpen((prev) => !prev);
+    }
+  };
+
+  const handleSelectTime = (value, type) => {
+    if (value === "now") {
+      const now = new Date();
+      const hours = now.getHours() % 12 || 12;
+      const minutes = now.getMinutes();
+      const period = now.getHours() >= 12 ? "PM" : "AM";
+
+      setSelectedHour(String(hours).padStart(2, "0"));
+      setSelectedMinute(String(minutes).padStart(2, "0"));
+      setSelectedPeriod(period);
+    } else {
+      if (type === "hour") setSelectedHour(value);
+      if (type === "minute") setSelectedMinute(value);
+      if (type === "period") setSelectedPeriod(value);
+    }
+  };
+
+  const handleConfirmTime = () => {
+    setTime(`${selectedHour}:${selectedMinute} ${selectedPeriod}`);
+    setIsPopupOpen(false);
+  };
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
     }
   }, [alwaysFocused]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target) && inputRef.current !== event.target) {
+        setIsPopupOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <TimePickerWrapper width={width} height={height}>
@@ -119,10 +274,18 @@ const TimePicker = ({
           isFocused={isFocused}
           readOnly={!allowManualInput}
         />
-        <IconWrapper disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"}>
+        <IconWrapper disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"} onClick={togglePopup}>
           <ClockIcon color={disabled ? "#CCD2D4" : "#334A54"} />
         </IconWrapper>
       </InputContainer>
+      <TimePickerPopup
+        isOpen={isPopupOpen}
+        selectedHour={selectedHour}
+        selectedMinute={selectedMinute}
+        selectedPeriod={selectedPeriod}
+        onSelect={handleSelectTime}
+        onClose={handleConfirmTime}
+      />
       {error && <ErrorMessage>Error message</ErrorMessage>}
     </TimePickerWrapper>
   );
