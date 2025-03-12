@@ -84,7 +84,7 @@ const ClockIcon = ({ color = "#334A54" }) => (
 
 const PopupWrapper = styled.div`
   position: absolute;
-  top: 45px;
+  top: ${({ hasLabel }) => (hasLabel ? "63px" : "45px")};
   right: 0;
   width: 170px;
   height: 278px;
@@ -114,26 +114,29 @@ const TimeColumn = styled.div`
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  &::-webkit-scrollbar { display: none; }
   -ms-overflow-style: none;
   text-align: center;
   padding: 2px;
+  gap: 4px;
 `;
 
 const TimeItem = styled.div`
-  width: 80%;
-  padding: 6px;
+  max-width: 24px;
+  max-height: 24px;
+  border-radius: 5px;
+  padding: 4px;
   margin 0 auto;
   font-size: 14px;
   text-align: center;
-  color: ${({ isSelected }) => (isSelected ? "#001D29" : "#334A54")};
-  font-weight: ${({ isSelected }) => (isSelected ? "600" : "400")};
-  cursor: pointer;
+  color: ${({ isSelected }) => (isSelected ? "#FFF" : "#001D29")};
+  background: ${({ isSelected }) => (isSelected ? "#007EB0" : "transparent")};
+  font-weight: 400;
+  cursor: ${({ isSelected }) => (isSelected ? "default" : "pointer")};
   transition: color 0.2s ease-in-out;
   &:hover {
-    color: #001D29;
+    color: ${({ isSelected }) => (isSelected ? "#FFF" : "#001D29")};
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#FAFCFD")};
   }
 `;
 
@@ -150,13 +153,13 @@ const Footer = styled.div`
   height: 48px;
 `;
 
-const TimePickerPopup = ({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose }) => {
+const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose, hasLabel }, ref) => {
   const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
   const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
   const periods = ["AM", "PM"];
 
   return (
-    <PopupWrapper isOpen={isOpen}>
+    <PopupWrapper ref={ref} isOpen={isOpen} hasLabel={hasLabel}>
       <ColumnContainer>
         <TimeColumn>
           {hours.map((hour) => (
@@ -184,11 +187,11 @@ const TimePickerPopup = ({ isOpen, selectedHour, selectedMinute, selectedPeriod,
       </ColumnContainer>
       <Footer>
         <Button type="outline3" style={{ width: "29px", height: "14px", margin: "auto 0", fontWeight: 400 }} onClick={() => onSelect("now")}>Now</Button>
-        <Button type="primary1" style={{ width: "39px", margin: "auto 0" }} onClick={onClose} disabled>OK</Button>
+        <Button type="primary1" style={{ width: "39px", margin: "auto 0" }} onClick={onClose}>OK</Button>
       </Footer>
     </PopupWrapper>
   );
-};
+});
 
 const TimePicker = ({
   label,
@@ -246,7 +249,12 @@ const TimePicker = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (popupRef.current && !popupRef.current.contains(event.target) && inputRef.current !== event.target) {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target) &&
+        inputRef.current &&
+        !inputRef.current.contains(event.target)
+      ) {
         setIsPopupOpen(false);
       }
     };
@@ -279,7 +287,9 @@ const TimePicker = ({
         </IconWrapper>
       </InputContainer>
       <TimePickerPopup
+        ref={popupRef}
         isOpen={isPopupOpen}
+        hasLabel={label}
         selectedHour={selectedHour}
         selectedMinute={selectedMinute}
         selectedPeriod={selectedPeriod}
