@@ -207,17 +207,27 @@ const TimePicker = ({
   const [time, setTime] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [ignoreClickOutside, setIgnoreClickOutside] = useState(false);
   const inputRef = useRef(null);
   const popupRef = useRef(null);
   const [selectedHour, setSelectedHour] = useState("12");
   const [selectedMinute, setSelectedMinute] = useState("00");
   const [selectedPeriod, setSelectedPeriod] = useState("AM");
 
-  const togglePopup = () => {
+  const togglePopup = (event) => {
+    event.stopPropagation();
+    setIgnoreClickOutside(true);
     if (!disabled) {
       setIsPopupOpen((prev) => !prev);
     }
   };
+
+  useEffect(() => {
+    if (ignoreClickOutside) {
+      const timer = setTimeout(() => setIgnoreClickOutside(false), 0);
+      return () => clearTimeout(timer);
+    }
+  }, [ignoreClickOutside]);
 
   const handleSelectTime = (value, type) => {
     if (value === "now") {
@@ -229,6 +239,8 @@ const TimePicker = ({
       setSelectedHour(String(hours).padStart(2, "0"));
       setSelectedMinute(String(minutes).padStart(2, "0"));
       setSelectedPeriod(period);
+
+      setTime(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`);
     } else {
       if (type === "hour") setSelectedHour(value);
       if (type === "minute") setSelectedMinute(value);
@@ -249,6 +261,7 @@ const TimePicker = ({
 
   useEffect(() => {
     const handleClickOutside = (event) => {
+      if (ignoreClickOutside) return;
       if (
         popupRef.current &&
         !popupRef.current.contains(event.target) &&
@@ -259,11 +272,11 @@ const TimePicker = ({
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
+  }, [ignoreClickOutside]);
 
   return (
     <TimePickerWrapper width={width} height={height}>
