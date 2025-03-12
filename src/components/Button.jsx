@@ -45,10 +45,14 @@ const StyledButton = styled.button`
 const Button = ({ children, type = "primary", ...props }) => {
   const [, setState] = useState("default");
 
-  const handleClick = () => {
+  const handleClick = (event) => {
     if (props.disabled) return;
     setState("pressed");
     setTimeout(() => setState("default"), 200);
+
+    if (props.onClick) {
+      props.onClick(event);
+    }
   };
 
   return (

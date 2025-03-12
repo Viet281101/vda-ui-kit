@@ -27,7 +27,7 @@ const TimePickerPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><TimePicker label="Choose Time" alwaysFocused={true} /></td>
+            <td><TimePicker label="Choose Time" placeholder="10:00 AM" alwaysFocused={true} /></td>
           </tr>
           
           {/* Completed State */}
@@ -39,7 +39,7 @@ const TimePickerPage = () => {
           {/* Error State */}
           <tr>
             <td>Error</td>
-            <td><TimePicker label="Choose Time" error={true} /></td>
+            <td><TimePicker label="Choose Time" error="Error Message" /></td>
           </tr>
           
           {/* Disabled State */}

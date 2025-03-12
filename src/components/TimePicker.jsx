@@ -202,7 +202,8 @@ const TimePicker = ({
   alwaysFocused = false,
   allowManualInput = false,
   disabled = false,
-  error = false,
+  error = "",
+  defaultValue = "",
 }) => {
   const [time, setTime] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -245,6 +246,12 @@ const TimePicker = ({
       if (type === "hour") setSelectedHour(value);
       if (type === "minute") setSelectedMinute(value);
       if (type === "period") setSelectedPeriod(value);
+
+      const newHour = type === "hour" ? value : selectedHour;
+      const newMinute = type === "minute" ? value : selectedMinute;
+      const newPeriod = type === "period" ? value : selectedPeriod;
+
+      setTime(`${newHour}:${newMinute} ${newPeriod}`);
     }
   };
 
@@ -286,7 +293,7 @@ const TimePicker = ({
           ref={inputRef}
           type="text"
           placeholder={placeholder}
-          value={time}
+          value={time || defaultValue}
           onChange={(e) => allowManualInput && setTime(e.target.value)}
           onFocus={() => setIsFocused(true)}
           onBlur={() => !alwaysFocused && setIsFocused(false)}
@@ -309,7 +316,7 @@ const TimePicker = ({
         onSelect={handleSelectTime}
         onClose={handleConfirmTime}
       />
-      {error && <ErrorMessage>Error message</ErrorMessage>}
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </TimePickerWrapper>
   );
 };
