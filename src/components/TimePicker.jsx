@@ -92,12 +92,13 @@ const PopupWrapper = styled.div`
   border-radius: 8px;
   border: 1px solid #EFF3F4;
   box-shadow: 0px 9px 28px rgba(0, 29, 41, 0.05);
-  display: ${({ isOpen }) => (isOpen ? "flex" : "none")};
+  display: flex;
   flex-direction: column;
   z-index: 100;
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  transform: ${({ isOpen }) => (isOpen ? "translateY(0)" : "translateY(-10px)")};
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  opacity: ${({ isVisible }) => (isVisible ? 1 : 0)};
+  transform: ${({ isVisible }) => (isVisible ? "translateY(0)" : "translateY(-10px)")};
+  transition: ${({ popupAnimation }) => popupAnimation ? "opacity 0.3s ease-in-out, transform 0.3s ease-in-out" : "none"};
+  pointer-events: ${({ isVisible }) => (isVisible ? "auto" : "none")};
 `;
 
 const ColumnContainer = styled.div`
@@ -188,13 +189,23 @@ const TimeColumnComponent = ({ items, selectedItem, type, onSelect, infiniteScro
   );
 };
 
-const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose, hasLabel, infiniteScroll = false, isTimeSelected }, ref) => {
+const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose, hasLabel, infiniteScroll = false, isTimeSelected, popupAnimation }, ref) => {
   const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
   const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
   const periods = ["AM", "PM"];
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (!popupAnimation) {
+      setIsVisible(isOpen);
+    } else {
+      const timer = setTimeout(() => setIsVisible(isOpen), isOpen ? 10 : 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, popupAnimation]);
 
   return (
-    <PopupWrapper ref={ref} isOpen={isOpen} hasLabel={hasLabel}>
+    <PopupWrapper ref={ref} isVisible={popupAnimation ? isVisible : isOpen} hasLabel={hasLabel} popupAnimation={popupAnimation}>
       <ColumnContainer>
         <TimeColumnComponent items={hours} selectedItem={selectedHour} type="hour" onSelect={onSelect} infiniteScroll={infiniteScroll} />
         <Divider />
@@ -228,6 +239,7 @@ const TimePicker = ({
   error = "",
   defaultValue = "",
   infiniteScroll = false,
+  popupAnimation = false,
 }) => {
   const [time, setTime] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -236,6 +248,7 @@ const TimePicker = ({
   const [isTimeSelected, setIsTimeSelected] = useState(false);
   const inputRef = useRef(null);
   const popupRef = useRef(null);
+  const iconRef = useRef(null);
   const [selectedHour, setSelectedHour] = useState("12");
   const [selectedMinute, setSelectedMinute] = useState("00");
   const [selectedPeriod, setSelectedPeriod] = useState("AM");
@@ -244,7 +257,18 @@ const TimePicker = ({
     event.stopPropagation();
     setIgnoreClickOutside(true);
     if (!disabled) {
-      setIsPopupOpen((prev) => !prev);
+      setIsPopupOpen((prev) => {
+        if (!prev) {
+          setIsFocused(true);
+        } else if (!alwaysFocused) {
+          setIsFocused(false);
+        }
+        return !prev;
+      });
+    }
+
+    if (!isPopupOpen && inputRef.current) {
+      inputRef.current.focus();
     }
   };
 
@@ -291,7 +315,10 @@ const TimePicker = ({
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [alwaysFocused]);
+    if (!isPopupOpen && !alwaysFocused) {
+      setIsFocused(false);
+    }
+  }, [alwaysFocused, isPopupOpen]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -323,13 +350,22 @@ const TimePicker = ({
           value={time || defaultValue}
           onChange={(e) => allowManualInput && setTime(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          onBlur={() => !alwaysFocused && setIsFocused(false)}
+          onBlur={(event) => {
+            setTimeout(() => {
+              if (
+                !isPopupOpen && 
+                !alwaysFocused && 
+                !popupRef.current?.contains(event.relatedTarget) &&
+                !iconRef.current?.contains(event.relatedTarget)
+              ) { setIsFocused(false); }
+            }, 100);
+          }}
           disabled={disabled}
           error={error}
           isFocused={isFocused}
           readOnly={!allowManualInput}
         />
-        <IconWrapper disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"} onClick={togglePopup}>
+        <IconWrapper ref={iconRef} disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"} onClick={togglePopup}>
           <ClockIcon color={disabled ? "#CCD2D4" : "#334A54"} />
         </IconWrapper>
       </InputContainer>
@@ -344,6 +380,7 @@ const TimePicker = ({
         onClose={handleConfirmTime}
         infiniteScroll={infiniteScroll}
         isTimeSelected={isTimeSelected}
+        popupAnimation={popupAnimation}
       />
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </TimePickerWrapper>
