@@ -4,10 +4,10 @@ import styled from "styled-components";
 const DatePickerWrapper = styled.div`
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: ${({ multiDate }) => (multiDate ? "row" : "column")};
+  gap: ${({ multiDate }) => (multiDate ? "16px" : "4px")};
   width: ${({ width }) => width || "361px"};
-  height: ${({ height }) => height};
+  height: ${({ multiDate, height }) => (multiDate ? "auto" : height)};
 `;
 
 const Label = styled.label`
@@ -27,6 +27,7 @@ const InputContainer = styled.div`
   align-items: center;
   position: relative;
   width: 100%;
+  height: calc(100% - 35px);
 `;
 
 const InputField = styled.input`
@@ -43,16 +44,16 @@ const InputField = styled.input`
   transition: border 0.3s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
   &:focus {
-    border: 1px solid ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
+    border: 1px solid ${({ disabled, error }) => (disabled ? "none" : error ? "#E71D36" : "#001D29")};
   }
   &::placeholder {
     color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
   }
 `;
 
-const ErrorMessage = styled.span`
+const PlaceholderLabel = styled.span`
   font-size: 12px;
-  color: #E71D36;
+  color: ${({ error }) => (error ? "#E71D36" : "#66777E")};
   padding-left: 16px;
 `;
 
@@ -91,6 +92,8 @@ const DatePicker = ({
   allowManualInput = false,
   disabled = false,
   error = false,
+  showPlaceholderLabel = false,
+  multiDate = false,
 }) => {
   const [date, setDate] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
@@ -103,27 +106,71 @@ const DatePicker = ({
   }, [alwaysFocused]);
 
   return (
-    <DatePickerWrapper width={width} height={height}>
+    < DatePickerWrapper width={width} height={height} multiDate={multiDate}>
       {label && <Label isVisible={isFocused || alwaysShowLabel} error={error}>{label}</Label>}
-      <InputContainer>
-        <InputField
-          ref={inputRef}
-          type="text"
-          placeholder={placeholder}
-          value={date}
-          onChange={(e) => allowManualInput && setDate(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => !alwaysFocused && setIsFocused(false)}
-          disabled={disabled}
-          error={error}
-          isFocused={isFocused}
-          readOnly={!allowManualInput}
-        />
-        <IconWrapper disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"}>
-          <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} />
-        </IconWrapper>
-      </InputContainer>
-      {error && <ErrorMessage>Error message</ErrorMessage>}
+
+      {multiDate ? (
+        <>
+          <InputContainer>
+            <InputField
+              ref={inputRef}
+              type="text"
+              placeholder="Start Date"
+              value={date.start || ""}
+              onChange={(e) => allowManualInput && setDate({ ...date, start: e.target.value })}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => !alwaysFocused && setIsFocused(false)}
+              disabled={disabled}
+              error={error}
+              isFocused={isFocused}
+              readOnly={!allowManualInput}
+            />
+            <IconWrapper disabled={disabled}>
+              <CalendarIcon />
+            </IconWrapper>
+          </InputContainer>
+
+          <InputContainer>
+            <InputField
+              type="text"
+              placeholder="End Date"
+              value={date.end || ""}
+              onChange={(e) => allowManualInput && setDate({ ...date, end: e.target.value })}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => !alwaysFocused && setIsFocused(false)}
+              disabled={disabled}
+              error={error}
+              isFocused={isFocused}
+              readOnly={!allowManualInput}
+            />
+            <IconWrapper disabled={disabled}>
+              <CalendarIcon />
+            </IconWrapper>
+          </InputContainer>
+        </>
+      ) : (
+        <InputContainer>
+          <InputField
+            ref={inputRef}
+            type="text"
+            placeholder={placeholder}
+            value={date}
+            onChange={(e) => allowManualInput && setDate(e.target.value)}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => !alwaysFocused && setIsFocused(false)}
+            disabled={disabled}
+            error={error}
+            isFocused={isFocused}
+            readOnly={!allowManualInput}
+          />
+          <IconWrapper disabled={disabled}>
+            <CalendarIcon />
+          </IconWrapper>
+        </InputContainer>
+      )}
+
+      {showPlaceholderLabel && <PlaceholderLabel error={error}>{error ? "Error message" : "mm/dd/yyyy"}
+    </PlaceholderLabel>}
     </DatePickerWrapper>
   );
 };

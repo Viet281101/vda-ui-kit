@@ -27,13 +27,13 @@ const DatePickerPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><DatePicker label="Choose Date" alwaysFocused={true} /></td>
+            <td><DatePicker label="Choose Date" alwaysFocused={true} showPlaceholderLabel /></td>
           </tr>
           
           {/* Completed State */}
           <tr>
             <td>Completed</td>
-            <td><DatePicker label="Choose Date" /></td>
+            <td><DatePicker label="Choose Date" showPlaceholderLabel /></td>
           </tr>
           
           {/* Error State */}
@@ -52,6 +52,12 @@ const DatePickerPage = () => {
           <tr>
             <td>Disabled Completed</td>
             <td><DatePicker label="Choose Date" disabled={true} /></td>
+          </tr>
+
+          {/* Multi Date State */}
+          <tr>
+            <td>Multi Date</td>
+            <td><DatePicker multiDate /></td>
           </tr>
         </tbody>
       </table>

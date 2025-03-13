@@ -44,7 +44,7 @@ const InputField = styled.input`
   transition: border 0.3s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
   &:focus {
-    border: 1px solid ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
+    border: 1px solid ${({ disabled, error }) => (disabled ? "none" : error ? "#E71D36" : "#001D29")};
   }
   &::placeholder {
     color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
