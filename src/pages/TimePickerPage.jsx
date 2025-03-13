@@ -23,6 +23,12 @@ const TimePickerPage = () => {
             <td>Default</td>
             <td><TimePicker placeholder="Choose Time" allowManualInput /></td>
           </tr>
+
+          {/* Infinite Scroll State */}
+          <tr>
+            <td>Infinite Picker Scroll (172px)</td>
+            <td><TimePicker placeholder="Choose Time" width="172px" infiniteScroll allowManualInput /></td>
+          </tr>
           
           {/* Focused State */}
           <tr>

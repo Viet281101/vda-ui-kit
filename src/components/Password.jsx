@@ -29,7 +29,7 @@ const InputContainer = styled.div`
 `;
 
 const InputField = styled.input`
-  width: 329px;
+  width: calc(100% - 32px);
   height: 19px;
   padding: 12px 16px;
   padding-right: 40px;

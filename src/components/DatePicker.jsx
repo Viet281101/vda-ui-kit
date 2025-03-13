@@ -30,8 +30,8 @@ const InputContainer = styled.div`
 `;
 
 const InputField = styled.input`
-  width: 329px;
-  height: 19px;
+  width: calc(100% - 32px);
+  height: calc(100% - 25px);
   padding: 12px 16px;
   padding-right: 40px;
   border: 1px solid ${({ isFocused, disabled, error }) => (disabled ? "#E1E8ED" : error ? "#E71D36" : isFocused ? "#001D29" : "#C4CDD5")};

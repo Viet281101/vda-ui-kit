@@ -15,6 +15,6 @@
 - [X] Dropdown
 - [X] Chips
 - [X] Dropdown + Chips
-- [ ] Signature Area
-- [ ] Date Picker
+- [X] Signature Area
+- [X] Date Picker
 - [ ] Time Picker

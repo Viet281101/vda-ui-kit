@@ -31,7 +31,7 @@ const InputContainer = styled.div`
 `;
 
 const InputField = styled.input`
-  width: 329px;
+  width: calc(100% - 32px);
   height: 19px;
   padding: 12px 16px;
   padding-right: 40px;
@@ -103,6 +103,7 @@ const PopupWrapper = styled.div`
 const ColumnContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  margin-top: 4px;
 `;
 
 const TimeColumn = styled.div`
@@ -119,6 +120,7 @@ const TimeColumn = styled.div`
   text-align: center;
   padding: 2px;
   gap: 4px;
+  position: relative;
 `;
 
 const TimeItem = styled.div`
@@ -153,7 +155,40 @@ const Footer = styled.div`
   height: 48px;
 `;
 
-const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose, hasLabel }, ref) => {
+const TimeColumnComponent = ({ items, selectedItem, type, onSelect, infiniteScroll }) => {
+  const listRef = useRef(null);
+
+  useEffect(() => {
+    if (infiniteScroll && listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight / 3;
+    }
+  }, [infiniteScroll]);
+
+  const handleScroll = () => {
+    if (!listRef.current || !infiniteScroll) return;
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+
+    if (scrollTop <= 0) {
+      listRef.current.scrollTop = scrollHeight / 3;
+    } else if (scrollTop + clientHeight >= scrollHeight) {
+      listRef.current.scrollTop = scrollHeight / 3 - clientHeight;
+    }
+  };
+
+  const duplicatedItems = infiniteScroll ? [...items, ...items, ...items] : items;
+
+  return (
+    <TimeColumn ref={listRef} onScroll={handleScroll}>
+      {duplicatedItems.map((item, index) => (
+        <TimeItem key={`${item}-${index}`} isSelected={selectedItem === item} onClick={() => onSelect(item, type)}>
+          {item}
+        </TimeItem>
+      ))}
+    </TimeColumn>
+  );
+};
+
+const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute, selectedPeriod, onSelect, onClose, hasLabel, infiniteScroll = false, isTimeSelected }, ref) => {
   const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
   const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
   const periods = ["AM", "PM"];
@@ -161,21 +196,9 @@ const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute
   return (
     <PopupWrapper ref={ref} isOpen={isOpen} hasLabel={hasLabel}>
       <ColumnContainer>
-        <TimeColumn>
-          {hours.map((hour) => (
-            <TimeItem key={hour} isSelected={selectedHour === hour} onClick={() => onSelect(hour, "hour")}>
-              {hour}
-            </TimeItem>
-          ))}
-        </TimeColumn>
+        <TimeColumnComponent items={hours} selectedItem={selectedHour} type="hour" onSelect={onSelect} infiniteScroll={infiniteScroll} />
         <Divider />
-        <TimeColumn>
-          {minutes.map((minute) => (
-            <TimeItem key={minute} isSelected={selectedMinute === minute} onClick={() => onSelect(minute, "minute")}>
-              {minute}
-            </TimeItem>
-          ))}
-        </TimeColumn>
+        <TimeColumnComponent items={minutes} selectedItem={selectedMinute} type="minute" onSelect={onSelect} infiniteScroll={infiniteScroll} />
         <Divider />
         <TimeColumn>
           {periods.map((period) => (
@@ -187,7 +210,7 @@ const TimePickerPopup = React.forwardRef(({ isOpen, selectedHour, selectedMinute
       </ColumnContainer>
       <Footer>
         <Button type="outline3" style={{ width: "29px", height: "14px", margin: "auto 0", fontWeight: 400 }} onClick={() => onSelect("now")}>Now</Button>
-        <Button type="primary1" style={{ width: "39px", margin: "auto 0" }} onClick={onClose}>OK</Button>
+        <Button type="primary1" style={{ width: "39px", margin: "auto 0" }} onClick={onClose} disabled={!isTimeSelected}>OK</Button>
       </Footer>
     </PopupWrapper>
   );
@@ -204,11 +227,13 @@ const TimePicker = ({
   disabled = false,
   error = "",
   defaultValue = "",
+  infiniteScroll = false,
 }) => {
   const [time, setTime] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [ignoreClickOutside, setIgnoreClickOutside] = useState(false);
+  const [isTimeSelected, setIsTimeSelected] = useState(false);
   const inputRef = useRef(null);
   const popupRef = useRef(null);
   const [selectedHour, setSelectedHour] = useState("12");
@@ -240,6 +265,7 @@ const TimePicker = ({
       setSelectedHour(String(hours).padStart(2, "0"));
       setSelectedMinute(String(minutes).padStart(2, "0"));
       setSelectedPeriod(period);
+      setIsTimeSelected(true);
 
       setTime(`${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`);
     } else {
@@ -251,6 +277,7 @@ const TimePicker = ({
       const newMinute = type === "minute" ? value : selectedMinute;
       const newPeriod = type === "period" ? value : selectedPeriod;
 
+      setIsTimeSelected(newHour !== "" && newMinute !== "");
       setTime(`${newHour}:${newMinute} ${newPeriod}`);
     }
   };
@@ -315,6 +342,8 @@ const TimePicker = ({
         selectedPeriod={selectedPeriod}
         onSelect={handleSelectTime}
         onClose={handleConfirmTime}
+        infiniteScroll={infiniteScroll}
+        isTimeSelected={isTimeSelected}
       />
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </TimePickerWrapper>

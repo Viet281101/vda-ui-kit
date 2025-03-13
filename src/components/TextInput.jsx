@@ -53,7 +53,7 @@ const PrefixInput = styled.div`
 `;
 
 const InputField = styled.input`
-  width: 309px;
+  width: calc(100% - 52px);
   height: 19px;
   padding: 12px 16px;
   border: none;
