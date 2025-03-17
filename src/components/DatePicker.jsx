@@ -4,7 +4,7 @@ import styled from "styled-components";
 const DatePickerWrapper = styled.div`
   position: relative;
   display: flex;
-  flex-direction: ${({ multiDate }) => (multiDate ? "row" : "column")};
+  flex-direction: column;
   gap: ${({ multiDate }) => (multiDate ? "16px" : "4px")};
   width: ${({ width }) => width || "361px"};
   height: ${({ multiDate, height }) => (multiDate ? "auto" : height)};
@@ -82,6 +82,69 @@ const CalendarIcon = ({ color = "#334A54" }) => (
   </svg>
 );
 
+const MultiInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+`;
+
+const PopupWrapper = styled.div`
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 240px;
+  height: 284px;
+  background: #ffffff;
+  border: 1px solid #e5e9ea;
+  border-radius: 8px;
+  box-shadow: 0px 9px 28px rgba(0, 29, 41, 0.05);
+  padding: 8px;
+  display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+  z-index: 100;
+`;
+
+const DateBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 224px;
+  height: 36px;
+  padding: 8px;
+`;
+
+const MonthYearContainer = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 600;
+  color: #001d29;
+  cursor: pointer;
+`;
+
+const ArrowContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+const ArrowDownIcon = ({ color = "#001D29" }) => (
+  <svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.16667 5.88197L1.14483 0.860135C1.01239 0.727691 0.854722 0.66319 0.671833 0.666635C0.488944 0.670079 0.331222 0.738024 0.198666 0.870468C0.0662219 1.00291 0 1.16058 0 1.34347C0 1.52636 0.0662219 1.68408 0.198666 1.81663L5.31283 6.92047C5.43339 7.04091 5.56844 7.13019 5.718 7.1883C5.86756 7.24652 6.01711 7.27563 6.16667 7.27563C6.31622 7.27563 6.46578 7.24652 6.61533 7.1883C6.76489 7.13019 6.89994 7.04091 7.0205 6.92047L12.1347 1.8063C12.2671 1.67386 12.3316 1.51791 12.3282 1.33847C12.3247 1.15891 12.2568 1.00291 12.1243 0.870468C11.9919 0.738024 11.8342 0.671801 11.6513 0.671801C11.4684 0.671801 11.3107 0.738024 11.1782 0.870468L6.16667 5.88197Z" fill={color}/>
+  </svg>
+);
+
+const ArrowLeftIcon = ({ color = "#001D29" }) => (
+  <svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.06017 6.16163L7.082 11.1835C7.21445 11.3159 7.27895 11.4736 7.2755 11.6565C7.27206 11.8394 7.20411 11.9971 7.07167 12.1296C6.93923 12.2621 6.78156 12.3283 6.59867 12.3283C6.41578 12.3283 6.25806 12.2621 6.1255 12.1296L1.02167 7.01546C0.901226 6.89491 0.811948 6.75985 0.753837 6.6103C0.695615 6.46074 0.666504 6.31119 0.666504 6.16163C0.666504 6.01208 0.695615 5.86252 0.753837 5.71296C0.811948 5.56341 0.901226 5.42835 1.02167 5.3078L6.13584 0.193631C6.26828 0.0611863 6.42423 -0.00331348 6.60367 0.000130963C6.78323 0.00357541 6.93923 0.0715195 7.07167 0.203964C7.20411 0.336408 7.27034 0.494075 7.27034 0.676964C7.27034 0.859853 7.20411 1.01758 7.07167 1.15013L2.06017 6.16163Z" fill={color}/>
+  </svg>
+);
+
+const ArrowRightIcon = ({ color = "#001D29" }) => (
+  <svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.88197 6.16667L0.860135 1.14483C0.727691 1.01239 0.66319 0.854722 0.666635 0.671833C0.670079 0.488944 0.738024 0.331222 0.870468 0.198666C1.00291 0.0662219 1.16058 0 1.34347 0C1.52636 0 1.68408 0.0662219 1.81663 0.198666L6.92047 5.31283C7.04091 5.43339 7.13019 5.56844 7.1883 5.718C7.24652 5.86756 7.27563 6.01711 7.27563 6.16667C7.27563 6.31622 7.24652 6.46578 7.1883 6.61533C7.13019 6.76489 7.04091 6.89994 6.92047 7.0205L1.8063 12.1347C1.67386 12.2671 1.51791 12.3316 1.33847 12.3282C1.15891 12.3247 1.00291 12.2568 0.870468 12.1243C0.738024 11.9919 0.671801 11.8342 0.671801 11.6513C0.671801 11.4684 0.738024 11.3107 0.870468 11.1782L5.88197 6.16667Z" fill={color}/>
+  </svg>
+);
+
 const DatePicker = ({
   label,
   placeholder = "Choose date",
@@ -98,6 +161,11 @@ const DatePicker = ({
   const [date, setDate] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const tooglePopup = () => {
+    setIsPopupOpen(!isPopupOpen);
+  };
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
@@ -111,42 +179,44 @@ const DatePicker = ({
 
       {multiDate ? (
         <>
-          <InputContainer>
-            <InputField
-              ref={inputRef}
-              type="text"
-              placeholder="Start Date"
-              value={date.start || ""}
-              onChange={(e) => allowManualInput && setDate({ ...date, start: e.target.value })}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => !alwaysFocused && setIsFocused(false)}
-              disabled={disabled}
-              error={error}
-              isFocused={isFocused}
-              readOnly={!allowManualInput}
-            />
-            <IconWrapper disabled={disabled}>
-              <CalendarIcon />
-            </IconWrapper>
-          </InputContainer>
+          <MultiInputContainer>
+            <InputContainer>
+              <InputField
+                ref={inputRef}
+                type="text"
+                placeholder="Start Date"
+                value={date.start || ""}
+                onChange={(e) => allowManualInput && setDate({ ...date, start: e.target.value })}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => !alwaysFocused && setIsFocused(false)}
+                disabled={disabled}
+                error={error}
+                isFocused={isFocused}
+                readOnly={!allowManualInput}
+              />
+              <IconWrapper disabled={disabled} onClick={tooglePopup}>
+                <CalendarIcon />
+              </IconWrapper>
+            </InputContainer>
 
-          <InputContainer>
-            <InputField
-              type="text"
-              placeholder="End Date"
-              value={date.end || ""}
-              onChange={(e) => allowManualInput && setDate({ ...date, end: e.target.value })}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => !alwaysFocused && setIsFocused(false)}
-              disabled={disabled}
-              error={error}
-              isFocused={isFocused}
-              readOnly={!allowManualInput}
-            />
-            <IconWrapper disabled={disabled}>
-              <CalendarIcon />
-            </IconWrapper>
-          </InputContainer>
+            <InputContainer>
+              <InputField
+                type="text"
+                placeholder="End Date"
+                value={date.end || ""}
+                onChange={(e) => allowManualInput && setDate({ ...date, end: e.target.value })}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => !alwaysFocused && setIsFocused(false)}
+                disabled={disabled}
+                error={error}
+                isFocused={isFocused}
+                readOnly={!allowManualInput}
+              />
+              <IconWrapper disabled={disabled} onClick={tooglePopup}>
+                <CalendarIcon />
+              </IconWrapper>
+            </InputContainer>
+          </MultiInputContainer>
         </>
       ) : (
         <InputContainer>
@@ -163,14 +233,26 @@ const DatePicker = ({
             isFocused={isFocused}
             readOnly={!allowManualInput}
           />
-          <IconWrapper disabled={disabled}>
+          <IconWrapper disabled={disabled} onClick={tooglePopup}>
             <CalendarIcon />
           </IconWrapper>
         </InputContainer>
       )}
 
-      {showPlaceholderLabel && <PlaceholderLabel error={error}>{error ? "Error message" : "mm/dd/yyyy"}
-    </PlaceholderLabel>}
+      {showPlaceholderLabel && <PlaceholderLabel error={error}>{error ? "Error message" : "mm/dd/yyyy"}</PlaceholderLabel>}
+      {isPopupOpen && (
+        <PopupWrapper isOpen={isPopupOpen}>
+          <DateBar>
+            <MonthYearContainer>
+              March 2023 <ArrowDownIcon />
+            </MonthYearContainer>
+            <ArrowContainer>
+              <ArrowLeftIcon />
+              <ArrowRightIcon />
+            </ArrowContainer>
+          </DateBar>
+        </PopupWrapper>
+      )}
     </DatePickerWrapper>
   );
 };
