@@ -90,7 +90,7 @@ const MultiInputContainer = styled.div`
 
 const PopupWrapper = styled.div`
   position: absolute;
-  top: 45px;
+  top: ${({ hasLabel }) => (hasLabel ? "62px" : "45px")};
   right: 0;
   width: 238px;
   height: 282px;
@@ -302,6 +302,14 @@ const DatePicker = ({
   };
   const toggleYearGrid = () => setIsYearGrid(!isYearGrid);
 
+  const formatDate = (date) => {
+    if (!date) return "";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
@@ -359,7 +367,7 @@ const DatePicker = ({
             ref={inputRef}
             type="text"
             placeholder={placeholder}
-            value={date}
+            value={date ? formatDate(new Date(date)) : ""}
             onChange={(e) => allowManualInput && setDate(e.target.value)}
             onFocus={() => setIsFocused(true)}
             onBlur={() => !alwaysFocused && setIsFocused(false)}
@@ -376,7 +384,7 @@ const DatePicker = ({
 
       {showPlaceholderLabel && <PlaceholderLabel error={error}>{error ? "Error message" : "mm/dd/yyyy"}</PlaceholderLabel>}
       {isPopupOpen && (
-        <PopupWrapper isOpen={isPopupOpen}>
+        <PopupWrapper isOpen={isPopupOpen} hasLabel={label}>
           <DateBar>
             <MonthYearContainer onClick={toggleYearGrid}>
             <MonthText>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })}</MonthText>
@@ -422,8 +430,9 @@ const DatePicker = ({
                 isSelected={isSelected}
                 onClick={() => {
                   if (!isOtherMonth) {
-                    setSelectedDate(new Date(currentYear, currentMonth, day));
-                    setDate(`${day}/${currentMonth + 1}/${currentYear}`);
+                    const selected = new Date(currentYear, currentMonth, day);
+                    setSelectedDate(selected);
+                    setDate(formatDate(selected));
                     setIsPopupOpen(false);
                   }
                 }}
