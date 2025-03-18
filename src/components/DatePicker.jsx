@@ -90,15 +90,14 @@ const MultiInputContainer = styled.div`
 
 const PopupWrapper = styled.div`
   position: absolute;
-  top: 20px;
-  left: 20px;
-  width: 240px;
-  height: 284px;
+  top: 45px;
+  right: 0;
+  width: 238px;
+  height: 282px;
   background: #ffffff;
   border: 1px solid #e5e9ea;
   border-radius: 8px;
   box-shadow: 0px 9px 28px rgba(0, 29, 41, 0.05);
-  padding: 8px;
   display: ${({ isOpen }) => (isOpen ? "block" : "none")};
   z-index: 100;
 `;
@@ -115,17 +114,51 @@ const DateBar = styled.div`
 const MonthYearContainer = styled.div`
   display: flex;
   align-items: center;
-  font-size: 16px;
-  font-weight: 600;
-  color: #001d29;
+  gap: 4px;
   cursor: pointer;
+  padding: 8px;
+`;
+
+const MonthText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #001d29;
+`;
+
+const YearText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #001d29;
 `;
 
 const ArrowContainer = styled.div`
   display: flex;
-  gap: 8px;
+  padding: 8px;
   align-items: center;
 `;
+
+const ArrowButton = styled.button`
+  min-width: 16px;
+  min-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+`;
+
+const ArrowUpIcon = ({ color = "#001D29" }) => (
+  <svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.16667 2.06017L1.14483 7.082C1.01239 7.21445 0.854722 7.27895 0.671833 7.2755C0.488944 7.27206 0.331222 7.20411 0.198666 7.07167C0.0662219 6.93923 0 6.78156 0 6.59867C0 6.41578 0.0662219 6.25806 0.198666 6.1255L5.31283 1.02167C5.43339 0.901226 5.56844 0.811948 5.718 0.753837C5.86756 0.695615 6.01711 0.666504 6.16667 0.666504C6.31622 0.666504 6.46578 0.695615 6.61533 0.753837C6.76489 0.811948 6.89994 0.901226 7.0205 1.02167L12.1347 6.13584C12.2671 6.26828 12.3316 6.42423 12.3282 6.60367C12.3247 6.78323 12.2568 6.93923 12.1243 7.07167C11.9919 7.20411 11.8342 7.27034 11.6513 7.27034C11.4684 7.27034 11.3107 7.20411 11.1782 7.07167L6.16667 2.06017Z" fill={color}/>
+  </svg>
+);
 
 const ArrowDownIcon = ({ color = "#001D29" }) => (
   <svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -162,10 +195,12 @@ const DatePicker = ({
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isYearGrid, setIsYearGrid] = useState(false);
 
   const tooglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
   };
+  const toggleYearGrid = () => setIsYearGrid(!isYearGrid);
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
@@ -243,12 +278,14 @@ const DatePicker = ({
       {isPopupOpen && (
         <PopupWrapper isOpen={isPopupOpen}>
           <DateBar>
-            <MonthYearContainer>
-              March 2023 <ArrowDownIcon />
+            <MonthYearContainer onClick={toggleYearGrid}>
+              <MonthText>March</MonthText>
+              <YearText>2023</YearText>
+              {isYearGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </MonthYearContainer>
             <ArrowContainer>
-              <ArrowLeftIcon />
-              <ArrowRightIcon />
+              <ArrowButton><ArrowLeftIcon /></ArrowButton>
+              <ArrowButton><ArrowRightIcon /></ArrowButton>
             </ArrowContainer>
           </DateBar>
         </PopupWrapper>
