@@ -178,6 +178,60 @@ const ArrowRightIcon = ({ color = "#001D29" }) => (
   </svg>
 );
 
+const DateGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  width: 224px;
+  height: 224px;
+  padding: 0 8px 8px 8px;
+  margin: auto;
+`;
+
+const DayLabel = styled.div`
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #66777E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+`;
+
+const DateCell = styled.button`
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: ${({ isSelected, isToday }) =>
+    isSelected ? "#007EB0" :
+    isToday ? "transparent" :
+    "transparent"};
+  color: ${({ isSelected, isToday, isOtherMonth }) =>
+    isSelected ? "#FFFFFF" :
+    isToday ? "#007EB0" :
+    isOtherMonth ? "#99A4A9" :
+    "#0A1629"};
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${({ isSelected }) => (isSelected ? "50%" : "0")};
+  cursor: pointer;
+  &:hover {
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#E1F5FE")};
+    border-radius: 50%;
+  }
+`;
+
 const DatePicker = ({
   label,
   placeholder = "Choose date",
@@ -196,6 +250,52 @@ const DatePicker = ({
   const inputRef = useRef(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isYearGrid, setIsYearGrid] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const generateCalendarDays = (month, year) => {
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
+    const lastDayOfPrevMonth = new Date(year, month, 0).getDate();
+
+    let days = [];
+
+    for (let i = firstDayOfMonth - 1; i >= 0; i--) {
+      days.push({
+        day: lastDayOfPrevMonth - i,
+        isOtherMonth: true,
+        isToday: false,
+        isSelected: false,
+      });
+    }
+
+    for (let i = 1; i <= lastDateOfMonth; i++) {
+      const today = new Date();
+      const isToday = today.getDate() === i && today.getMonth() === month && today.getFullYear() === year;
+      const isSelected = selectedDate && selectedDate.getDate() === i && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
+
+      days.push({
+        day: i,
+        isOtherMonth: false,
+        isToday,
+        isSelected,
+      });
+    }
+
+    while (days.length % 7 !== 0) {
+      days.push({
+        day: days.length % 7 + 1,
+        isOtherMonth: true,
+        isToday: false,
+        isSelected: false,
+      });
+    }
+
+    return days;
+  };
+  
+  const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
   const tooglePopup = () => {
     setIsPopupOpen(!isPopupOpen);
@@ -279,15 +379,57 @@ const DatePicker = ({
         <PopupWrapper isOpen={isPopupOpen}>
           <DateBar>
             <MonthYearContainer onClick={toggleYearGrid}>
-              <MonthText>March</MonthText>
-              <YearText>2023</YearText>
+            <MonthText>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })}</MonthText>
+            <YearText>{currentYear}</YearText>
               {isYearGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </MonthYearContainer>
             <ArrowContainer>
-              <ArrowButton><ArrowLeftIcon /></ArrowButton>
-              <ArrowButton><ArrowRightIcon /></ArrowButton>
+              <ArrowButton
+                onClick={() => {
+                  setCurrentMonth(prev => {
+                    if (prev === 0) {
+                      setCurrentYear(y => y - 1);
+                      return 11;
+                    }
+                    return prev - 1;
+                  });
+                }}
+              ><ArrowLeftIcon /></ArrowButton>
+              <ArrowButton
+                onClick={() => {
+                  setCurrentMonth(prev => {
+                    if (prev === 11) {
+                      setCurrentYear(y => y + 1);
+                      return 0;
+                    }
+                    return prev + 1;
+                  });
+                }}
+              ><ArrowRightIcon /></ArrowButton>
             </ArrowContainer>
           </DateBar>
+
+          <DateGridWrapper>
+            {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
+              <DayLabel key={index}>{day}</DayLabel>
+            ))}
+
+            {calendarDays.map(({ day, isOtherMonth, isToday, isSelected }, index) => (
+              <DateCell
+                key={index}
+                isOtherMonth={isOtherMonth}
+                isToday={isToday}
+                isSelected={isSelected}
+                onClick={() => {
+                  if (!isOtherMonth) {
+                    setSelectedDate(new Date(currentYear, currentMonth, day));
+                    setDate(`${day}/${currentMonth + 1}/${currentYear}`);
+                    setIsPopupOpen(false);
+                  }
+                }}
+              >{day}</DateCell>
+            ))}
+          </DateGridWrapper>
         </PopupWrapper>
       )}
     </DatePickerWrapper>
