@@ -288,6 +288,54 @@ const YearRangeText = styled.span`
   color: #001d29;
 `;
 
+const MonthGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  width: 232px;
+  height: 176px;
+  gap: 8px;
+  margin: auto;
+`;
+
+const MonthCell = styled.button`
+  width: 66.67px;
+  height: 32px;
+  padding: 8px;
+  margin: auto;
+  text-align: center;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: ${({ isSelected }) => (isSelected ? "#FFFFFF" : "#0A1629")};
+  background: ${({ isSelected }) => (isSelected ? "#007EB0" : "transparent")};
+  border: none;
+  border-radius: ${({ isSelected }) => (isSelected ? "8px" : "0")};
+  cursor: pointer;
+  &:hover {
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#E1F5FE")};
+    border-radius: 8px;
+  }
+`;
+
+const MonthBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 224px;
+  height: 36px;
+  padding: 8px;
+`;
+
+const YearOnlyText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #001d29;
+`;
+
 const DatePicker = ({
   label,
   placeholder = "Choose date",
@@ -323,10 +371,11 @@ const DatePicker = ({
   const inputRef = useRef(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isYearGrid, setIsYearGrid] = useState(false);
+  const [isMonthGrid, setIsMonthGrid] = useState(false);
+  const monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
   const [yearRange, setYearRange] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [isMonthGrid, setIsMonthGrid] = useState(false);
   const errorMessage = error && typeof error === "string" ? error : "Error Message";
 
   const updateYearRange = () => {
@@ -336,10 +385,20 @@ const DatePicker = ({
   const selectYear = (year) => {
     setCurrentYear(year);
     setIsYearGrid(false);
+    setIsMonthGrid(true);
   };
+  const selectMonth = (index) => {
+    setCurrentMonth(index);
+    setIsMonthGrid(false);
+  };
+
   useEffect(() => {
     updateYearRange();
+    // eslint-disable-next-line
   }, [currentYear]);
+
+  const handlePrevYear = () => setCurrentYear((prev) => prev - 1);
+  const handleNextYear = () => setCurrentYear((prev) => prev + 1);
   const handlePrevYearRange = () => setCurrentYear((prev) => prev - 15);
   const handleNextYearRange = () => setCurrentYear((prev) => prev + 15);
 
@@ -417,7 +476,6 @@ const DatePicker = ({
       return newMonth;
     });
   };
-
   const handlePrevMonth = () => updateMonthRange(-1);
   const handleNextMonth = () => updateMonthRange(1);
 
@@ -506,13 +564,24 @@ const DatePicker = ({
             <YearBar>
               <YearGroupContainer onClick={toggleYearGrid}>
                 <YearRangeText>{`${yearRange[0]} - ${yearRange[14]}`}</YearRangeText>
-                {isMonthGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                <ArrowDownIcon />
               </YearGroupContainer>
               <ArrowContainer>
                 <ArrowButton onClick={handlePrevYearRange}><ArrowLeftIcon /></ArrowButton>
                 <ArrowButton onClick={handleNextYearRange}><ArrowRightIcon /></ArrowButton>
               </ArrowContainer>
             </YearBar>
+          ) : isMonthGrid ? (
+            <MonthBar>
+              <YearGroupContainer onClick={() => { setIsMonthGrid(false); setIsYearGrid(true); }}>
+                <YearOnlyText>{currentYear}</YearOnlyText>
+                <ArrowUpIcon />
+              </YearGroupContainer>
+              <ArrowContainer>
+                <ArrowButton onClick={handlePrevYear}><ArrowLeftIcon /></ArrowButton>
+                <ArrowButton onClick={handleNextYear}><ArrowRightIcon /></ArrowButton>
+              </ArrowContainer>
+            </MonthBar>
           ) : (
             <DateBar>
               <MonthYearContainer onClick={toggleYearGrid}>
@@ -533,6 +602,18 @@ const DatePicker = ({
                 <YearCell key={year} isSelected={year === currentYear} onClick={() => selectYear(year)}>{year}</YearCell>
               ))}
             </YearGridWrapper>
+          ) : isMonthGrid ? (
+            <MonthGridWrapper>
+              {monthsList.map((month, index) => (
+                <MonthCell
+                  key={index}
+                  isSelected={index === currentMonth}
+                  onClick={() => selectMonth(index)}
+                >
+                  {month}
+                </MonthCell>
+              ))}
+            </MonthGridWrapper>
           ) : (
             <DateGridWrapper>
               {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (<DayLabel key={index}>{day}</DayLabel>))}
