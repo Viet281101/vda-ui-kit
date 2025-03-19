@@ -33,7 +33,7 @@ const TimePickerPage = () => {
           {/* Focused State */}
           <tr>
             <td>Focused</td>
-            <td><TimePicker label="Choose Time" placeholder="10:00 AM" alwaysFocused={true} /></td>
+            <td><TimePicker label="Choose Time" placeholder="10:00 AM" alwaysFocused /></td>
           </tr>
           
           {/* Completed State */}
@@ -51,13 +51,13 @@ const TimePickerPage = () => {
           {/* Disabled State */}
           <tr>
             <td>Disabled</td>
-            <td><TimePicker label="Choose Time" disabled={true} /></td>
+            <td><TimePicker label="Choose Time" disabled /></td>
           </tr>
           
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><TimePicker label="Choose Time" disabled={true} defaultValue="10:30 AM" /></td>
+            <td><TimePicker label="Choose Time" disabled defaultValue="10:30 AM" /></td>
           </tr>
         </tbody>
       </table>

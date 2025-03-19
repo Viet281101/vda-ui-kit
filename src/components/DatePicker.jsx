@@ -241,7 +241,7 @@ const DatePicker = ({
   alwaysFocused = false,
   allowManualInput = false,
   disabled = false,
-  error = false,
+  error = "",
   showPlaceholderLabel = false,
   multiDate = false,
   defaultValue = "",
@@ -269,6 +269,7 @@ const DatePicker = ({
   const [isYearGrid, setIsYearGrid] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const errorMessage = error && typeof error === "string" ? error : "Error Message";
 
   const generateCalendarDays = (month, year) => {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -314,6 +315,7 @@ const DatePicker = ({
   const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
   const togglePopup = () => {
+    if (disabled) return;
     if (!isPopupOpen) {
       const parsedDate = new Date(date);
       if (!isNaN(parsedDate.getTime())) {
@@ -360,8 +362,8 @@ const DatePicker = ({
                 isFocused={isFocused}
                 readOnly={!allowManualInput}
               />
-              <IconWrapper disabled={disabled} onClick={togglePopup}>
-                <CalendarIcon />
+              <IconWrapper disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
+                <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"}/>
               </IconWrapper>
             </InputContainer>
 
@@ -386,8 +388,8 @@ const DatePicker = ({
                 isFocused={isFocused}
                 readOnly={!allowManualInput}
               />
-              <IconWrapper disabled={disabled} onClick={togglePopup}>
-                <CalendarIcon />
+              <IconWrapper disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
+                <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} />
               </IconWrapper>
             </InputContainer>
           </MultiInputContainer>
@@ -418,13 +420,13 @@ const DatePicker = ({
             error={error}
             isFocused={isFocused}
           />
-          <IconWrapper disabled={disabled} onClick={togglePopup}>
-            <CalendarIcon />
+          <IconWrapper disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
+            <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"}/>
           </IconWrapper>
         </InputContainer>
       )}
 
-      {showPlaceholderLabel && <PlaceholderLabel error={error}>{error ? "Error message" : "mm/dd/yyyy"}</PlaceholderLabel>}
+      {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : "mm/dd/yyyy"}</PlaceholderLabel>)}
       {isPopupOpen && (
         <PopupWrapper isOpen={isPopupOpen} hasLabel={label}>
           <DateBar>
