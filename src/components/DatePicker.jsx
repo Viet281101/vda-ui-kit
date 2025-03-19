@@ -263,6 +263,31 @@ const YearCell = styled.button`
   }
 `;
 
+const YearBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 224px;
+  height: 36px;
+  padding: 8px;
+`;
+
+const YearGroupContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+`;
+
+const YearRangeText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #001d29;
+`;
+
 const DatePicker = ({
   label,
   placeholder = "Choose date",
@@ -301,6 +326,7 @@ const DatePicker = ({
   const [yearRange, setYearRange] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [isMonthGrid, setIsMonthGrid] = useState(false);
   const errorMessage = error && typeof error === "string" ? error : "Error Message";
 
   const updateYearRange = () => {
@@ -311,6 +337,11 @@ const DatePicker = ({
     setCurrentYear(year);
     setIsYearGrid(false);
   };
+  useEffect(() => {
+    updateYearRange();
+  }, [currentYear]);
+  const handlePrevYearRange = () => setCurrentYear((prev) => prev - 15);
+  const handleNextYearRange = () => setCurrentYear((prev) => prev + 15);
 
   const generateCalendarDays = (month, year) => {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -390,6 +421,19 @@ const DatePicker = ({
   const handlePrevMonth = () => updateMonthRange(-1);
   const handleNextMonth = () => updateMonthRange(1);
 
+  const handleBlur = (value, key = null) => {
+    if (!alwaysFocused) setIsFocused(false);
+    const parsedDate = new Date(value);
+    if (!isNaN(parsedDate.getTime())) {
+      if (key) {
+        setDate((prev) => ({ ...prev, [key]: formatDate(parsedDate) }));
+      } else {
+        setDate(formatDate(parsedDate));
+        setSelectedDate(parsedDate);
+      }
+    }
+  };
+
   return (
     < DatePickerWrapper width={width} height={height} multiDate={multiDate}>
       {label && <Label isVisible={isFocused || alwaysShowLabel} error={error}>{label}</Label>}
@@ -405,15 +449,7 @@ const DatePicker = ({
                 value={date.start ? formatDate(new Date(date.start)) : ""}
                 onChange={(e) => allowManualInput && setDate({ ...date, start: e.target.value })}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => {
-                  if (!alwaysFocused) setIsFocused(false);
-                  if (allowManualInput) {
-                    const parsedDate = new Date(date.start);
-                    if (!isNaN(parsedDate.getTime())) {
-                      setDate({ ...date, start: formatDate(parsedDate) });
-                    }
-                  }
-                }}
+                onBlur={(e) => handleBlur(e.target.value, "start")}
                 disabled={disabled}
                 error={error}
                 isFocused={isFocused}
@@ -431,15 +467,7 @@ const DatePicker = ({
                 value={date.end ? formatDate(new Date(date.end)) : ""}
                 onChange={(e) => allowManualInput && setDate({ ...date, end: e.target.value })}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => {
-                  if (!alwaysFocused) setIsFocused(false);
-                  if (allowManualInput) {
-                    const parsedDate = new Date(date.end);
-                    if (!isNaN(parsedDate.getTime())) {
-                      setDate({ ...date, end: formatDate(parsedDate) });
-                    }
-                  }
-                }}
+                onBlur={(e) => handleBlur(e.target.value, "end")}
                 disabled={disabled}
                 error={error}
                 isFocused={isFocused}
@@ -458,20 +486,8 @@ const DatePicker = ({
             type="text"
             placeholder={placeholder}
             value={date}
-            onChange={(e) => {
-              if (allowManualInput) {
-                setDate(e.target.value);
-              }
-            }}
-            onBlur={() => {
-              if (!alwaysFocused) setIsFocused(false);
-              if (allowManualInput) {
-                const parsedDate = new Date(date);
-                if (!isNaN(parsedDate.getTime())) {
-                  setSelectedDate(parsedDate);
-                }
-              }
-            }}
+            onChange={(e) => { if (allowManualInput) { setDate(e.target.value); } }}
+            onBlur={(e) => handleBlur(e.target.value)}
             onFocus={() => setIsFocused(true)}
             disabled={disabled}
             error={error}
@@ -486,17 +502,30 @@ const DatePicker = ({
       {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : "mm/dd/yyyy"}</PlaceholderLabel>)}
       {isPopupOpen && (
         <PopupWrapper isOpen={isPopupOpen} hasLabel={label}>
-          <DateBar>
-            <MonthYearContainer onClick={toggleYearGrid}>
-            <MonthText>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })}</MonthText>
-            <YearText>{currentYear}</YearText>
-              {isYearGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
-            </MonthYearContainer>
-            <ArrowContainer>
-              <ArrowButton onClick={handlePrevMonth}><ArrowLeftIcon /></ArrowButton>
-              <ArrowButton onClick={handleNextMonth}><ArrowRightIcon /></ArrowButton>
-            </ArrowContainer>
-          </DateBar>
+          {isYearGrid ? (
+            <YearBar>
+              <YearGroupContainer onClick={toggleYearGrid}>
+                <YearRangeText>{`${yearRange[0]} - ${yearRange[14]}`}</YearRangeText>
+                {isMonthGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
+              </YearGroupContainer>
+              <ArrowContainer>
+                <ArrowButton onClick={handlePrevYearRange}><ArrowLeftIcon /></ArrowButton>
+                <ArrowButton onClick={handleNextYearRange}><ArrowRightIcon /></ArrowButton>
+              </ArrowContainer>
+            </YearBar>
+          ) : (
+            <DateBar>
+              <MonthYearContainer onClick={toggleYearGrid}>
+                <MonthText>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })}</MonthText>
+                <YearText>{currentYear}</YearText>
+                {isYearGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
+              </MonthYearContainer>
+              <ArrowContainer>
+                <ArrowButton onClick={handlePrevMonth}><ArrowLeftIcon /></ArrowButton>
+                <ArrowButton onClick={handleNextMonth}><ArrowRightIcon /></ArrowButton>
+              </ArrowContainer>
+            </DateBar>
+          )}
 
           {isYearGrid ? (
             <YearGridWrapper>
@@ -506,7 +535,7 @@ const DatePicker = ({
             </YearGridWrapper>
           ) : (
             <DateGridWrapper>
-              {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (<DayLabel key={index}>{day}</DayLabel>))}
+              {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (<DayLabel key={index}>{day}</DayLabel>))}
 
               {calendarDays.map(({ day, isOtherMonth, isToday, isSelected }, index) => (
                 <DateCell
