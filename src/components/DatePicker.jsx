@@ -244,15 +244,31 @@ const DatePicker = ({
   error = false,
   showPlaceholderLabel = false,
   multiDate = false,
+  defaultValue = "",
 }) => {
-  const [date, setDate] = useState("");
+  const formatDate = (date) => {
+    if (!date || isNaN(date.getTime())) return "";
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
+  const isValidDate = (d) => d instanceof Date && !isNaN(d);
+  const parsedDefaultDate = new Date(defaultValue);
+
+  const [date, setDate] = useState(
+    isValidDate(parsedDefaultDate) ? formatDate(parsedDefaultDate) : ""
+  );
+  const [selectedDate, setSelectedDate] = useState(
+    isValidDate(parsedDefaultDate) ? parsedDefaultDate : null
+  );
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isYearGrid, setIsYearGrid] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const [selectedDate, setSelectedDate] = useState(null);
 
   const generateCalendarDays = (month, year) => {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
@@ -297,18 +313,17 @@ const DatePicker = ({
   
   const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
-  const tooglePopup = () => {
+  const togglePopup = () => {
+    if (!isPopupOpen) {
+      const parsedDate = new Date(date);
+      if (!isNaN(parsedDate.getTime())) {
+        setCurrentMonth(parsedDate.getMonth());
+        setCurrentYear(parsedDate.getFullYear());
+      }
+    }
     setIsPopupOpen(!isPopupOpen);
   };
   const toggleYearGrid = () => setIsYearGrid(!isYearGrid);
-
-  const formatDate = (date) => {
-    if (!date) return "";
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
@@ -328,16 +343,24 @@ const DatePicker = ({
                 ref={inputRef}
                 type="text"
                 placeholder="Start Date"
-                value={date.start || ""}
+                value={date.start ? formatDate(new Date(date.start)) : ""}
                 onChange={(e) => allowManualInput && setDate({ ...date, start: e.target.value })}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => !alwaysFocused && setIsFocused(false)}
+                onBlur={() => {
+                  if (!alwaysFocused) setIsFocused(false);
+                  if (allowManualInput) {
+                    const parsedDate = new Date(date.start);
+                    if (!isNaN(parsedDate.getTime())) {
+                      setDate({ ...date, start: formatDate(parsedDate) });
+                    }
+                  }
+                }}
                 disabled={disabled}
                 error={error}
                 isFocused={isFocused}
                 readOnly={!allowManualInput}
               />
-              <IconWrapper disabled={disabled} onClick={tooglePopup}>
+              <IconWrapper disabled={disabled} onClick={togglePopup}>
                 <CalendarIcon />
               </IconWrapper>
             </InputContainer>
@@ -346,16 +369,24 @@ const DatePicker = ({
               <InputField
                 type="text"
                 placeholder="End Date"
-                value={date.end || ""}
+                value={date.end ? formatDate(new Date(date.end)) : ""}
                 onChange={(e) => allowManualInput && setDate({ ...date, end: e.target.value })}
                 onFocus={() => setIsFocused(true)}
-                onBlur={() => !alwaysFocused && setIsFocused(false)}
+                onBlur={() => {
+                  if (!alwaysFocused) setIsFocused(false);
+                  if (allowManualInput) {
+                    const parsedDate = new Date(date.end);
+                    if (!isNaN(parsedDate.getTime())) {
+                      setDate({ ...date, end: formatDate(parsedDate) });
+                    }
+                  }
+                }}
                 disabled={disabled}
                 error={error}
                 isFocused={isFocused}
                 readOnly={!allowManualInput}
               />
-              <IconWrapper disabled={disabled} onClick={tooglePopup}>
+              <IconWrapper disabled={disabled} onClick={togglePopup}>
                 <CalendarIcon />
               </IconWrapper>
             </InputContainer>
@@ -367,16 +398,27 @@ const DatePicker = ({
             ref={inputRef}
             type="text"
             placeholder={placeholder}
-            value={date ? formatDate(new Date(date)) : ""}
-            onChange={(e) => allowManualInput && setDate(e.target.value)}
+            value={date}
+            onChange={(e) => {
+              if (allowManualInput) {
+                setDate(e.target.value);
+              }
+            }}
+            onBlur={() => {
+              if (!alwaysFocused) setIsFocused(false);
+              if (allowManualInput) {
+                const parsedDate = new Date(date);
+                if (!isNaN(parsedDate.getTime())) {
+                  setSelectedDate(parsedDate);
+                }
+              }
+            }}
             onFocus={() => setIsFocused(true)}
-            onBlur={() => !alwaysFocused && setIsFocused(false)}
             disabled={disabled}
             error={error}
             isFocused={isFocused}
-            readOnly={!allowManualInput}
           />
-          <IconWrapper disabled={disabled} onClick={tooglePopup}>
+          <IconWrapper disabled={disabled} onClick={togglePopup}>
             <CalendarIcon />
           </IconWrapper>
         </InputContainer>
@@ -394,23 +436,29 @@ const DatePicker = ({
             <ArrowContainer>
               <ArrowButton
                 onClick={() => {
-                  setCurrentMonth(prev => {
-                    if (prev === 0) {
-                      setCurrentYear(y => y - 1);
-                      return 11;
+                  setCurrentMonth((prevMonth) => {
+                    let newMonth = prevMonth - 1;
+                    let newYear = currentYear;
+                    if (newMonth < 0) {
+                      newMonth = 11;
+                      newYear -= 1;
                     }
-                    return prev - 1;
+                    setCurrentYear(newYear);
+                    return newMonth;
                   });
                 }}
               ><ArrowLeftIcon /></ArrowButton>
               <ArrowButton
                 onClick={() => {
-                  setCurrentMonth(prev => {
-                    if (prev === 11) {
-                      setCurrentYear(y => y + 1);
-                      return 0;
+                  setCurrentMonth((prevMonth) => {
+                    let newMonth = prevMonth + 1;
+                    let newYear = currentYear;
+                    if (newMonth > 11) {
+                      newMonth = 0;
+                      newYear += 1;
                     }
-                    return prev + 1;
+                    setCurrentYear(newYear);
+                    return newMonth;
                   });
                 }}
               ><ArrowRightIcon /></ArrowButton>

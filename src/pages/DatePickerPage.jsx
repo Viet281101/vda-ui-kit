@@ -21,7 +21,7 @@ const DatePickerPage = () => {
           {/* Default State */}
           <tr>
             <td>Default</td>
-            <td><DatePicker placeholder="Choose Date" /></td>
+            <td><DatePicker placeholder="Choose Date" allowManualInput /></td>
           </tr>
           
           {/* Focused State */}
@@ -51,7 +51,7 @@ const DatePickerPage = () => {
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>
-            <td><DatePicker label="Choose Date" disabled={true} /></td>
+            <td><DatePicker label="Choose Date" disabled={true} defaultValue="03/21/2025" /></td>
           </tr>
 
           {/* Multi Date State */}
