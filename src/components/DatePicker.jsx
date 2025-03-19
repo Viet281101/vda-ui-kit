@@ -232,6 +232,37 @@ const DateCell = styled.button`
   }
 `;
 
+const YearGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  width: 232px;
+  height: 224px;
+  gap: 8px;
+  margin: auto;
+`;
+
+const YearCell = styled.button`
+  width: 66.67px;
+  height: 32px;
+  padding: 8px;
+  margin: auto;
+  text-align: center;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: ${({ isSelected }) => (isSelected ? "#FFFFFF" : "#0A1629")};
+  background: ${({ isSelected }) => (isSelected ? "#007EB0" : "transparent")};
+  border: none;
+  border-radius: ${({ isSelected }) => (isSelected ? "8px" : "0")};
+  cursor: pointer;
+  &:hover {
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#E1F5FE")};
+    border-radius: 8px;
+  }
+`;
+
 const DatePicker = ({
   label,
   placeholder = "Choose date",
@@ -267,17 +298,25 @@ const DatePicker = ({
   const inputRef = useRef(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isYearGrid, setIsYearGrid] = useState(false);
+  const [yearRange, setYearRange] = useState([]);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const errorMessage = error && typeof error === "string" ? error : "Error Message";
+
+  const updateYearRange = () => {
+    const startYear = Math.floor(currentYear / 15) * 15;
+    setYearRange(Array.from({ length: 15 }, (_, i) => startYear + i));
+  };
+  const selectYear = (year) => {
+    setCurrentYear(year);
+    setIsYearGrid(false);
+  };
 
   const generateCalendarDays = (month, year) => {
     const firstDayOfMonth = new Date(year, month, 1).getDay();
     const lastDateOfMonth = new Date(year, month + 1, 0).getDate();
     const lastDayOfPrevMonth = new Date(year, month, 0).getDate();
-
     let days = [];
-
     for (let i = firstDayOfMonth - 1; i >= 0; i--) {
       days.push({
         day: lastDayOfPrevMonth - i,
@@ -286,12 +325,10 @@ const DatePicker = ({
         isSelected: false,
       });
     }
-
     for (let i = 1; i <= lastDateOfMonth; i++) {
       const today = new Date();
       const isToday = today.getDate() === i && today.getMonth() === month && today.getFullYear() === year;
       const isSelected = selectedDate && selectedDate.getDate() === i && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
-
       days.push({
         day: i,
         isOtherMonth: false,
@@ -299,7 +336,6 @@ const DatePicker = ({
         isSelected,
       });
     }
-
     while (days.length % 7 !== 0) {
       days.push({
         day: days.length % 7 + 1,
@@ -308,7 +344,6 @@ const DatePicker = ({
         isSelected: false,
       });
     }
-
     return days;
   };
   
@@ -325,13 +360,35 @@ const DatePicker = ({
     }
     setIsPopupOpen(!isPopupOpen);
   };
-  const toggleYearGrid = () => setIsYearGrid(!isYearGrid);
+  const toggleYearGrid = () => {
+    if (!isYearGrid) updateYearRange();
+    setIsYearGrid(!isYearGrid);
+  };
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
     }
   }, [alwaysFocused]);
+
+  const updateMonthRange = (offset) => {
+    setCurrentMonth((prevMonth) => {
+      let newMonth = prevMonth + offset;
+      let newYear = currentYear;
+      if (newMonth < 0) {
+        newMonth = 11;
+        newYear -= 1;
+      } else if (newMonth > 11) {
+        newMonth = 0;
+        newYear += 1;
+      }
+      setCurrentYear(newYear);
+      return newMonth;
+    });
+  };
+
+  const handlePrevMonth = () => updateMonthRange(-1);
+  const handleNextMonth = () => updateMonthRange(1);
 
   return (
     < DatePickerWrapper width={width} height={height} multiDate={multiDate}>
@@ -436,59 +493,39 @@ const DatePicker = ({
               {isYearGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
             </MonthYearContainer>
             <ArrowContainer>
-              <ArrowButton
-                onClick={() => {
-                  setCurrentMonth((prevMonth) => {
-                    let newMonth = prevMonth - 1;
-                    let newYear = currentYear;
-                    if (newMonth < 0) {
-                      newMonth = 11;
-                      newYear -= 1;
-                    }
-                    setCurrentYear(newYear);
-                    return newMonth;
-                  });
-                }}
-              ><ArrowLeftIcon /></ArrowButton>
-              <ArrowButton
-                onClick={() => {
-                  setCurrentMonth((prevMonth) => {
-                    let newMonth = prevMonth + 1;
-                    let newYear = currentYear;
-                    if (newMonth > 11) {
-                      newMonth = 0;
-                      newYear += 1;
-                    }
-                    setCurrentYear(newYear);
-                    return newMonth;
-                  });
-                }}
-              ><ArrowRightIcon /></ArrowButton>
+              <ArrowButton onClick={handlePrevMonth}><ArrowLeftIcon /></ArrowButton>
+              <ArrowButton onClick={handleNextMonth}><ArrowRightIcon /></ArrowButton>
             </ArrowContainer>
           </DateBar>
 
-          <DateGridWrapper>
-            {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
-              <DayLabel key={index}>{day}</DayLabel>
-            ))}
+          {isYearGrid ? (
+            <YearGridWrapper>
+              {yearRange.map((year) => (
+                <YearCell key={year} isSelected={year === currentYear} onClick={() => selectYear(year)}>{year}</YearCell>
+              ))}
+            </YearGridWrapper>
+          ) : (
+            <DateGridWrapper>
+              {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (<DayLabel key={index}>{day}</DayLabel>))}
 
-            {calendarDays.map(({ day, isOtherMonth, isToday, isSelected }, index) => (
-              <DateCell
-                key={index}
-                isOtherMonth={isOtherMonth}
-                isToday={isToday}
-                isSelected={isSelected}
-                onClick={() => {
-                  if (!isOtherMonth) {
-                    const selected = new Date(currentYear, currentMonth, day);
-                    setSelectedDate(selected);
-                    setDate(formatDate(selected));
-                    setIsPopupOpen(false);
-                  }
-                }}
-              >{day}</DateCell>
-            ))}
-          </DateGridWrapper>
+              {calendarDays.map(({ day, isOtherMonth, isToday, isSelected }, index) => (
+                <DateCell
+                  key={index}
+                  isOtherMonth={isOtherMonth}
+                  isToday={isToday}
+                  isSelected={isSelected}
+                  onClick={() => {
+                    if (!isOtherMonth) {
+                      const selected = new Date(currentYear, currentMonth, day);
+                      setSelectedDate(selected);
+                      setDate(formatDate(selected));
+                      setIsPopupOpen(false);
+                    }
+                  }}
+                >{day}</DateCell>
+              ))}
+            </DateGridWrapper>
+          )}
         </PopupWrapper>
       )}
     </DatePickerWrapper>
