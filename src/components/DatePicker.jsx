@@ -90,7 +90,7 @@ const MultiInputContainer = styled.div`
 
 const PopupWrapper = styled.div`
   position: absolute;
-  top: ${({ hasLabel }) => (hasLabel ? "62px" : "45px")};
+  ${({ position }) => (position === "top" ? "bottom: 100%;" : "top: 100%;")}
   right: 0;
   width: 238px;
   height: 282px;
@@ -101,6 +101,8 @@ const PopupWrapper = styled.div`
   display: ${({ isOpen }) => (isOpen ? "block" : "none")};
   z-index: 100;
   user-select: none;
+  margin-top: ${({ position, hasLabel }) => (position === "bottom" ? (hasLabel ? "-18px" : "-35px") : "0")};
+  margin-bottom: ${({ position }) => (position === "top" ? "-17px" : "0")};
 `;
 
 const DateBar = styled.div`
@@ -362,12 +364,8 @@ const DatePicker = ({
   const isValidDate = (d) => d instanceof Date && !isNaN(d);
   const parsedDefaultDate = new Date(defaultValue);
 
-  const [date, setDate] = useState(
-    isValidDate(parsedDefaultDate) ? formatDate(parsedDefaultDate) : ""
-  );
-  const [selectedDate, setSelectedDate] = useState(
-    isValidDate(parsedDefaultDate) ? parsedDefaultDate : null
-  );
+  const [date, setDate] = useState(isValidDate(parsedDefaultDate) ? formatDate(parsedDefaultDate) : "");
+  const [selectedDate, setSelectedDate] = useState(isValidDate(parsedDefaultDate) ? parsedDefaultDate : null);
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
   const popupRef = useRef(null);
@@ -380,6 +378,7 @@ const DatePicker = ({
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const errorMessage = error && typeof error === "string" ? error : "Error Message";
+  const [popupPosition, setPopupPosition] = useState("bottom");
 
   const updateYearRange = () => {
     const startYear = Math.floor(currentYear / 15) * 15;
@@ -420,6 +419,19 @@ const DatePicker = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isPopupOpen]);
+
+  const updatePopupPosition = () => {
+    if (inputRef.current) {
+      const rect = inputRef.current.getBoundingClientRect();
+      const spaceAbove = rect.top;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 300 && spaceAbove > spaceBelow) {
+        setPopupPosition("top");
+      } else {
+        setPopupPosition("bottom");
+      }
+    }
+  };
 
   const handlePrevYear = () => setCurrentYear((prev) => prev - 1);
   const handleNextYear = () => setCurrentYear((prev) => prev + 1);
@@ -484,6 +496,7 @@ const DatePicker = ({
         setCurrentYear(parsedDate.getFullYear());
       }
       inputRef.current?.focus();
+      updatePopupPosition();
     }
     setIsPopupOpen(!isPopupOpen);
   };
@@ -598,7 +611,7 @@ const DatePicker = ({
 
       {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : "mm/dd/yyyy"}</PlaceholderLabel>)}
       {isPopupOpen && (
-        <PopupWrapper ref={popupRef} isOpen={isPopupOpen} hasLabel={label}>
+        <PopupWrapper ref={popupRef} isOpen={isPopupOpen} position={popupPosition} hasLabel={label}>
           {isYearGrid ? (
             <YearBar>
               <YearGroupContainer onClick={toggleYearGrid}>
