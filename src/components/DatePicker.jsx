@@ -434,6 +434,17 @@ const DatePicker = ({
         isSelected: false,
       });
     }
+    if (days.length / 7 < 6) {
+      const remainingDays = 7 - (days.length % 7);
+      for (let i = 1; i <= remainingDays; i++) {
+        days.push({
+          day: i,
+          isOtherMonth: true,
+          isToday: false,
+          isSelected: false,
+        });
+      }
+    }
     return days;
   };
   
@@ -605,13 +616,7 @@ const DatePicker = ({
           ) : isMonthGrid ? (
             <MonthGridWrapper>
               {monthsList.map((month, index) => (
-                <MonthCell
-                  key={index}
-                  isSelected={index === currentMonth}
-                  onClick={() => selectMonth(index)}
-                >
-                  {month}
-                </MonthCell>
+                <MonthCell key={index} isSelected={index === currentMonth} onClick={() => selectMonth(index)}>{month}</MonthCell>
               ))}
             </MonthGridWrapper>
           ) : (
