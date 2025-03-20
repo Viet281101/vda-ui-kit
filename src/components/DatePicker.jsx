@@ -100,6 +100,7 @@ const PopupWrapper = styled.div`
   box-shadow: 0px 9px 28px rgba(0, 29, 41, 0.05);
   display: ${({ isOpen }) => (isOpen ? "block" : "none")};
   z-index: 100;
+  user-select: none;
 `;
 
 const DateBar = styled.div`
@@ -369,6 +370,8 @@ const DatePicker = ({
   );
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const inputRef = useRef(null);
+  const popupRef = useRef(null);
+  const iconRef = useRef(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isYearGrid, setIsYearGrid] = useState(false);
   const [isMonthGrid, setIsMonthGrid] = useState(false);
@@ -396,6 +399,27 @@ const DatePicker = ({
     updateYearRange();
     // eslint-disable-next-line
   }, [currentYear]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        popupRef.current &&
+        !popupRef.current.contains(event.target) && 
+        inputRef.current &&
+        !inputRef.current.contains(event.target) &&
+        iconRef.current &&
+        !iconRef.current.contains(event.target)
+      ) {
+        setIsPopupOpen(false);
+      }
+    };
+    if (isPopupOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isPopupOpen]);
 
   const handlePrevYear = () => setCurrentYear((prev) => prev - 1);
   const handleNextYear = () => setCurrentYear((prev) => prev + 1);
@@ -450,7 +474,8 @@ const DatePicker = ({
   
   const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
-  const togglePopup = () => {
+  const togglePopup = (event) => {
+    event.stopPropagation();
     if (disabled) return;
     if (!isPopupOpen) {
       const parsedDate = new Date(date);
@@ -458,6 +483,7 @@ const DatePicker = ({
         setCurrentMonth(parsedDate.getMonth());
         setCurrentYear(parsedDate.getFullYear());
       }
+      inputRef.current?.focus();
     }
     setIsPopupOpen(!isPopupOpen);
   };
@@ -467,10 +493,12 @@ const DatePicker = ({
   };
 
   useEffect(() => {
-    if (alwaysFocused && inputRef.current) {
-      inputRef.current.focus();
+    if (isPopupOpen) {
+      inputRef.current?.focus();
+    } else if (!alwaysFocused) {
+      inputRef.current?.blur();
     }
-  }, [alwaysFocused]);
+  }, [isPopupOpen, alwaysFocused]);
 
   const updateMonthRange = (offset) => {
     setCurrentMonth((prevMonth) => {
@@ -524,7 +552,7 @@ const DatePicker = ({
                 isFocused={isFocused}
                 readOnly={!allowManualInput}
               />
-              <IconWrapper disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
+              <IconWrapper ref={iconRef} disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
                 <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"}/>
               </IconWrapper>
             </InputContainer>
@@ -542,7 +570,7 @@ const DatePicker = ({
                 isFocused={isFocused}
                 readOnly={!allowManualInput}
               />
-              <IconWrapper disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
+              <IconWrapper ref={iconRef} disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
                 <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} />
               </IconWrapper>
             </InputContainer>
@@ -562,7 +590,7 @@ const DatePicker = ({
             error={error}
             isFocused={isFocused}
           />
-          <IconWrapper disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
+          <IconWrapper ref={iconRef} disabled={disabled} onClick={!disabled ? togglePopup : undefined}>
             <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"}/>
           </IconWrapper>
         </InputContainer>
@@ -570,7 +598,7 @@ const DatePicker = ({
 
       {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : "mm/dd/yyyy"}</PlaceholderLabel>)}
       {isPopupOpen && (
-        <PopupWrapper isOpen={isPopupOpen} hasLabel={label}>
+        <PopupWrapper ref={popupRef} isOpen={isPopupOpen} hasLabel={label}>
           {isYearGrid ? (
             <YearBar>
               <YearGroupContainer onClick={toggleYearGrid}>
