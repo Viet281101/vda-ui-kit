@@ -29,31 +29,31 @@ const TimePickerPage = () => {
             <td>Infinite Picker Scroll (172px)</td>
             <td><TimePicker label="Choose Time" placeholder="Choose Time" width="172px" infiniteScroll popupAnimation allowManualInput /></td>
           </tr>
-          
+
           {/* Focused State */}
           <tr>
             <td>Focused</td>
             <td><TimePicker label="Choose Time" placeholder="10:00 AM" alwaysFocused /></td>
           </tr>
-          
+
           {/* Completed State */}
           <tr>
             <td>Completed</td>
             <td><TimePicker label="Choose Time" /></td>
           </tr>
-          
+
           {/* Error State */}
           <tr>
             <td>Error</td>
             <td><TimePicker label="Choose Time" error="Error Message" /></td>
           </tr>
-          
+
           {/* Disabled State */}
           <tr>
             <td>Disabled</td>
             <td><TimePicker label="Choose Time" disabled /></td>
           </tr>
-          
+
           {/* Disabled Completed State */}
           <tr>
             <td>Disabled Completed</td>

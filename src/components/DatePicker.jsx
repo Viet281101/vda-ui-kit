@@ -352,13 +352,24 @@ const DatePicker = ({
   showPlaceholderLabel = false,
   multiDate = false,
   defaultValue = "",
+  format = "mm/dd/yyyy",
 }) => {
-  const formatDate = (date) => {
+  const formatDate = (date, format) => {
     if (!date || isNaN(date.getTime())) return "";
     const day = String(date.getDate()).padStart(2, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
+    switch (format) {
+      case "yyyy/mm/dd":
+        return `${year}/${month}/${day}`;
+      case "yyyy/dd/mm":
+        return `${year}/${day}/${month}`;
+      case "dd/mm/yyyy":
+          return `${day}/${month}/${year}`;
+      case "mm/dd/yyyy":
+      default:
+        return `${month}/${day}/${year}`;
+    }
   };
 
   const isValidDate = (d) => d instanceof Date && !isNaN(d);
@@ -483,7 +494,7 @@ const DatePicker = ({
     }
     return days;
   };
-  
+
   const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
   const togglePopup = (event) => {
@@ -536,9 +547,9 @@ const DatePicker = ({
     const parsedDate = new Date(value);
     if (!isNaN(parsedDate.getTime())) {
       if (key) {
-        setDate((prev) => ({ ...prev, [key]: formatDate(parsedDate) }));
+        setDate((prev) => ({ ...prev, [key]: formatDate(parsedDate, format) }));
       } else {
-        setDate(formatDate(parsedDate));
+        setDate(formatDate(parsedDate, format));
         setSelectedDate(parsedDate);
       }
     }
@@ -609,7 +620,7 @@ const DatePicker = ({
         </InputContainer>
       )}
 
-      {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : "mm/dd/yyyy"}</PlaceholderLabel>)}
+      {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : format}</PlaceholderLabel>)}
       {isPopupOpen && (
         <PopupWrapper ref={popupRef} isOpen={isPopupOpen} position={popupPosition} hasLabel={label}>
           {isYearGrid ? (
@@ -674,7 +685,7 @@ const DatePicker = ({
                     if (!isOtherMonth) {
                       const selected = new Date(currentYear, currentMonth, day);
                       setSelectedDate(selected);
-                      setDate(formatDate(selected));
+                      setDate(formatDate(selected, format));
                       setIsPopupOpen(false);
                     }
                   }}
