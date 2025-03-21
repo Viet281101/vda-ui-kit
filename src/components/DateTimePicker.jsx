@@ -43,7 +43,8 @@ const InputField = styled.input`
   transition: border 0.3s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? "not-allowed" : "text")};
   &:focus {
-    border: 1px solid ${({ disabled, error }) => (disabled ? "none" : error ? "1px solid #E71D36" : "1px solid #001D29")};
+    border: 1px solid ${({ disabled, error }) =>
+      disabled ? "none" : error ? "#E71D36" : "#001D29"};
   }
   &::placeholder {
     color: ${({ error }) => (error ? "#E71D36" : "#99A4A9")};
@@ -81,9 +82,37 @@ const CalendarIcon = ({ color = "#334A54" }) => (
   </svg>
 );
 
+const PopupWrapper = styled.div`
+  position: absolute;
+  top: calc(100% - 22px);
+  left: 0;
+  margin-top: 4px;
+  width: 410px;
+  height: 284px;
+  background: #fff;
+  border: 1px solid #E5E9EA;
+  border-radius: 8px;
+  box-shadow: 0px 9px 28px 0px #0019290D;
+  display: flex;
+  flex-direction: row;
+  z-index: 100;
+`;
+
+const DatePanel = styled.div`
+  width: 240px;
+  height: 100%;
+  border-radius: 8px 0 0 8px;
+`;
+
+const TimePanel = styled.div`
+  width: 170px;
+  height: 100%;
+  border-radius: 0 8px 8px 0;
+`;
+
 const DateTimePicker = ({
   label,
-  placeholder = "Choose date",
+  placeholder = "Choose date time",
   width = "361px",
   height = "80px",
   alwaysShowLabel = false,
@@ -94,13 +123,31 @@ const DateTimePicker = ({
 }) => {
   const [date, setDate] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const inputRef = useRef(null);
+
+  const togglePopup = (e) => {
+    e.stopPropagation();
+    if (disabled) return;
+    setIsPopupOpen((prev) => !prev);
+    if (!isPopupOpen && inputRef.current) inputRef.current.focus();
+  };
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
     }
   }, [alwaysFocused]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!inputRef.current?.contains(e.target)) {
+        setIsPopupOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <DateTimePickerWrapper width={width} height={height}>
@@ -119,11 +166,17 @@ const DateTimePicker = ({
           isFocused={isFocused}
           readOnly={!allowManualInput}
         />
-        <IconWrapper disabled={disabled} color={disabled ? "#CCD2D4" : "#334A54"}>
+        <IconWrapper disabled={disabled} onClick={togglePopup}>
           <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} />
         </IconWrapper>
       </InputContainer>
       {error && <ErrorMessage>Error message</ErrorMessage>}
+      {isPopupOpen && (
+        <PopupWrapper>
+          <DatePanel></DatePanel>
+          <TimePanel></TimePanel>
+        </PopupWrapper>
+      )}
     </DateTimePickerWrapper>
   );
 };

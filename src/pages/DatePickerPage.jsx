@@ -64,13 +64,19 @@ const DatePickerPage = () => {
           {/* Date Time Picker */}
           <tr>
             <td>Date Time Picker</td>
-            <td><DateTimePicker label="Choose Date Time" alwaysShowLabel format="dd/mm/yyyy hh:mm AM/PM" showPlaceholderLabel /></td>
+            <td><DateTimePicker width="410px" label="Choose Date Time" alwaysShowLabel format="dd/mm/yyyy hh:mm AM/PM" showPlaceholderLabel /></td>
           </tr>
 
           {/* Date Time Picker Error State */}
           <tr>
-            <td>Date Time Picker</td>
-            <td><DateTimePicker label="Choose Date Time" format="dd/mm/yyyy hh:mm AM/PM" error /></td>
+            <td>Date Time Picker Error State</td>
+            <td><DateTimePicker width="410px" label="Choose Date Time" format="dd/mm/yyyy hh:mm AM/PM" error /></td>
+          </tr>
+
+          {/* Date Time Picker Disabled State */}
+          <tr>
+            <td>Date Time Picker Disabled State</td>
+            <td><DateTimePicker width="410px" label="Choose Date Time" disabled /></td>
           </tr>
         </tbody>
       </table>
