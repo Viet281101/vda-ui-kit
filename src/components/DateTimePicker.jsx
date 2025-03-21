@@ -110,6 +110,303 @@ const TimePanel = styled.div`
   border-radius: 0 8px 8px 0;
 `;
 
+const DateBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 224px;
+  height: 36px;
+  padding: 8px;
+`;
+
+const MonthYearContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+`;
+
+const MonthText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #001d29;
+`;
+
+const YearText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  letter-spacing: 0%;
+  color: #001d29;
+`;
+
+const ArrowContainer = styled.div`
+  display: flex;
+  padding: 8px;
+  align-items: center;
+`;
+
+const ArrowButton = styled.button`
+  min-width: 16px;
+  min-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+`;
+
+const ArrowUpIcon = ({ color = "#001D29" }) => (
+  <svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.16667 2.06017L1.14483 7.082C1.01239 7.21445 0.854722 7.27895 0.671833 7.2755C0.488944 7.27206 0.331222 7.20411 0.198666 7.07167C0.0662219 6.93923 0 6.78156 0 6.59867C0 6.41578 0.0662219 6.25806 0.198666 6.1255L5.31283 1.02167C5.43339 0.901226 5.56844 0.811948 5.718 0.753837C5.86756 0.695615 6.01711 0.666504 6.16667 0.666504C6.31622 0.666504 6.46578 0.695615 6.61533 0.753837C6.76489 0.811948 6.89994 0.901226 7.0205 1.02167L12.1347 6.13584C12.2671 6.26828 12.3316 6.42423 12.3282 6.60367C12.3247 6.78323 12.2568 6.93923 12.1243 7.07167C11.9919 7.20411 11.8342 7.27034 11.6513 7.27034C11.4684 7.27034 11.3107 7.20411 11.1782 7.07167L6.16667 2.06017Z" fill={color}/>
+  </svg>
+);
+
+const ArrowDownIcon = ({ color = "#001D29" }) => (
+  <svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M6.16667 5.88197L1.14483 0.860135C1.01239 0.727691 0.854722 0.66319 0.671833 0.666635C0.488944 0.670079 0.331222 0.738024 0.198666 0.870468C0.0662219 1.00291 0 1.16058 0 1.34347C0 1.52636 0.0662219 1.68408 0.198666 1.81663L5.31283 6.92047C5.43339 7.04091 5.56844 7.13019 5.718 7.1883C5.86756 7.24652 6.01711 7.27563 6.16667 7.27563C6.31622 7.27563 6.46578 7.24652 6.61533 7.1883C6.76489 7.13019 6.89994 7.04091 7.0205 6.92047L12.1347 1.8063C12.2671 1.67386 12.3316 1.51791 12.3282 1.33847C12.3247 1.15891 12.2568 1.00291 12.1243 0.870468C11.9919 0.738024 11.8342 0.671801 11.6513 0.671801C11.4684 0.671801 11.3107 0.738024 11.1782 0.870468L6.16667 5.88197Z" fill={color}/>
+  </svg>
+);
+
+const ArrowLeftIcon = ({ color = "#001D29" }) => (
+  <svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M2.06017 6.16163L7.082 11.1835C7.21445 11.3159 7.27895 11.4736 7.2755 11.6565C7.27206 11.8394 7.20411 11.9971 7.07167 12.1296C6.93923 12.2621 6.78156 12.3283 6.59867 12.3283C6.41578 12.3283 6.25806 12.2621 6.1255 12.1296L1.02167 7.01546C0.901226 6.89491 0.811948 6.75985 0.753837 6.6103C0.695615 6.46074 0.666504 6.31119 0.666504 6.16163C0.666504 6.01208 0.695615 5.86252 0.753837 5.71296C0.811948 5.56341 0.901226 5.42835 1.02167 5.3078L6.13584 0.193631C6.26828 0.0611863 6.42423 -0.00331348 6.60367 0.000130963C6.78323 0.00357541 6.93923 0.0715195 7.07167 0.203964C7.20411 0.336408 7.27034 0.494075 7.27034 0.676964C7.27034 0.859853 7.20411 1.01758 7.07167 1.15013L2.06017 6.16163Z" fill={color}/>
+  </svg>
+);
+
+const ArrowRightIcon = ({ color = "#001D29" }) => (
+  <svg width="8" height="13" viewBox="0 0 8 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5.88197 6.16667L0.860135 1.14483C0.727691 1.01239 0.66319 0.854722 0.666635 0.671833C0.670079 0.488944 0.738024 0.331222 0.870468 0.198666C1.00291 0.0662219 1.16058 0 1.34347 0C1.52636 0 1.68408 0.0662219 1.81663 0.198666L6.92047 5.31283C7.04091 5.43339 7.13019 5.56844 7.1883 5.718C7.24652 5.86756 7.27563 6.01711 7.27563 6.16667C7.27563 6.31622 7.24652 6.46578 7.1883 6.61533C7.13019 6.76489 7.04091 6.89994 6.92047 7.0205L1.8063 12.1347C1.67386 12.2671 1.51791 12.3316 1.33847 12.3282C1.15891 12.3247 1.00291 12.2568 0.870468 12.1243C0.738024 11.9919 0.671801 11.8342 0.671801 11.6513C0.671801 11.4684 0.738024 11.3107 0.870468 11.1782L5.88197 6.16667Z" fill={color}/>
+  </svg>
+);
+
+const DateGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(7, 1fr);
+  width: 224px;
+  height: 224px;
+  padding: 0 8px 8px 8px;
+  margin: auto;
+`;
+
+const DayLabel = styled.div`
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #66777E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+`;
+
+const DateCell = styled.button`
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: ${({ isSelected, isToday }) =>
+    isSelected ? "#007EB0" :
+    isToday ? "transparent" :
+    "transparent"};
+  color: ${({ isSelected, isToday, isOtherMonth }) =>
+    isSelected ? "#FFFFFF" :
+    isToday ? "#007EB0" :
+    isOtherMonth ? "#99A4A9" :
+    "#0A1629"};
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: ${({ isSelected }) => (isSelected ? "50%" : "0")};
+  cursor: pointer;
+  &:hover {
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#E1F5FE")};
+    border-radius: 50%;
+  }
+`;
+
+const YearGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  width: 232px;
+  height: 224px;
+  gap: 8px;
+  margin: auto;
+`;
+
+const YearCell = styled.button`
+  width: 66.67px;
+  height: 32px;
+  padding: 8px;
+  margin: auto;
+  text-align: center;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: ${({ isSelected }) => (isSelected ? "#FFFFFF" : "#0A1629")};
+  background: ${({ isSelected }) => (isSelected ? "#007EB0" : "transparent")};
+  border: none;
+  border-radius: ${({ isSelected }) => (isSelected ? "8px" : "0")};
+  cursor: pointer;
+  &:hover {
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#E1F5FE")};
+    border-radius: 8px;
+  }
+`;
+
+const YearBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 224px;
+  height: 36px;
+  padding: 8px;
+`;
+
+const YearGroupContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+`;
+
+const YearRangeText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #001d29;
+`;
+
+const MonthGridWrapper = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  width: 232px;
+  height: 176px;
+  gap: 8px;
+  margin: auto;
+`;
+
+const MonthCell = styled.button`
+  width: 66.67px;
+  height: 32px;
+  padding: 8px;
+  margin: auto;
+  text-align: center;
+  font-family: Roboto;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 16px;
+  color: ${({ isSelected }) => (isSelected ? "#FFFFFF" : "#0A1629")};
+  background: ${({ isSelected }) => (isSelected ? "#007EB0" : "transparent")};
+  border: none;
+  border-radius: ${({ isSelected }) => (isSelected ? "8px" : "0")};
+  cursor: pointer;
+  &:hover {
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#E1F5FE")};
+    border-radius: 8px;
+  }
+`;
+
+const MonthBar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 224px;
+  height: 36px;
+  padding: 8px;
+`;
+
+const YearOnlyText = styled.span`
+  font-family: Roboto;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 20px;
+  color: #001d29;
+`;
+
+const ColumnContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+`;
+
+const TimeColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 56px;
+  height: 222px;
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+  -ms-overflow-style: none;
+  text-align: center;
+  padding: 2px;
+  gap: 4px;
+  position: relative;
+`;
+
+const TimeItem = styled.div`
+  max-width: 24px;
+  max-height: 24px;
+  border-radius: 5px;
+  padding: 4px;
+  margin: 0 auto;
+  font-size: 14px;
+  text-align: center;
+  color: ${({ isSelected }) => (isSelected ? "#FFF" : "#001D29")};
+  background: ${({ isSelected }) => (isSelected ? "#007EB0" : "transparent")};
+  font-weight: 400;
+  cursor: ${({ isSelected }) => (isSelected ? "default" : "pointer")};
+  transition: color 0.2s ease-in-out;
+  &:hover {
+    color: ${({ isSelected }) => (isSelected ? "#FFF" : "#001D29")};
+    background: ${({ isSelected }) => (isSelected ? "#007EB0" : "#FAFCFD")};
+  }
+`;
+
+const Divider = styled.div`
+  width: 1px;
+  background: #E5E9EA;
+`;
+
+const TimeColumnComponent = ({ items, selectedItem, type, onSelect }) => {
+  return (
+    <TimeColumn>
+      {items.map((item, index) => (
+        <TimeItem
+          key={`${item}-${index}`}
+          isSelected={selectedItem === item}
+          onClick={() => onSelect(item, type)}
+        >
+          {item}
+        </TimeItem>
+      ))}
+    </TimeColumn>
+  );
+};
+
 const DateTimePicker = ({
   label,
   placeholder = "Choose date time",
@@ -125,12 +422,65 @@ const DateTimePicker = ({
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const inputRef = useRef(null);
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  const [selectedHour, setSelectedHour] = useState("12");
+  const [selectedMinute, setSelectedMinute] = useState("00");
+  const [selectedPeriod, setSelectedPeriod] = useState("AM");
+  const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
+  const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
+  const periods = ["AM", "PM"];
+
+  const generateCalendarDays = (month, year) => {
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+    const prevMonthLastDate = new Date(year, month, 0).getDate();
+    let days = [];
+    for (let i = firstDay - 1; i >= 0; i--) {
+      days.push({
+        day: prevMonthLastDate - i,
+        isOtherMonth: true,
+        isSelected: false,
+        isToday: false,
+      });
+    }
+    for (let i = 1; i <= lastDate; i++) {
+      const thisDate = new Date(year, month, i);
+      const isToday = thisDate.toDateString() === today.toDateString();
+      const isSelected = selectedDate.toDateString() === thisDate.toDateString();
+      days.push({
+        day: i,
+        isOtherMonth: false,
+        isSelected,
+        isToday,
+      });
+    }
+    while (days.length % 7 !== 0) {
+      days.push({
+        day: days.length % 7 + 1,
+        isOtherMonth: true,
+        isSelected: false,
+        isToday: false,
+      });
+    }
+    return days;
+  };
+  const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
   const togglePopup = (e) => {
     e.stopPropagation();
     if (disabled) return;
     setIsPopupOpen((prev) => !prev);
     if (!isPopupOpen && inputRef.current) inputRef.current.focus();
+  };
+
+  const handleSelectTime = (value, type) => {
+    if (type === "hour") setSelectedHour(value);
+    if (type === "minute") setSelectedMinute(value);
+    if (type === "period") setSelectedPeriod(value);
   };
 
   useEffect(() => {
@@ -173,8 +523,58 @@ const DateTimePicker = ({
       {error && <ErrorMessage>Error message</ErrorMessage>}
       {isPopupOpen && (
         <PopupWrapper>
-          <DatePanel></DatePanel>
-          <TimePanel></TimePanel>
+          <DatePanel>
+            <DateBar>
+              <MonthYearContainer>
+                <MonthText>{monthsList[currentMonth]}</MonthText>
+                <YearText>{currentYear}</YearText>
+              </MonthYearContainer>
+              <ArrowContainer>
+                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1))}>
+                  <ArrowLeftIcon />
+                </ArrowButton>
+                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1))}>
+                  <ArrowRightIcon />
+                </ArrowButton>
+              </ArrowContainer>
+            </DateBar>
+            <DateGridWrapper>
+              {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (<DayLabel key={i}>{d}</DayLabel>))}
+              {calendarDays.map(({ day, isOtherMonth, isSelected, isToday }, index) => (
+                <DateCell
+                  key={index}
+                  isOtherMonth={isOtherMonth}
+                  isSelected={isSelected}
+                  isToday={isToday}
+                  onClick={() => {
+                    const selected = new Date(currentYear, currentMonth, day);
+                    setSelectedDate(selected);
+                    setDate(`${String(selected.getMonth() + 1).padStart(2, "0")}/${String(selected.getDate()).padStart(2, "0")}/${selected.getFullYear()}`);
+                    setIsPopupOpen(false);
+                  }}
+                >{day}</DateCell>
+              ))}
+            </DateGridWrapper>
+          </DatePanel>
+
+          <TimePanel>
+            <ColumnContainer>
+              <Divider />
+              <TimeColumnComponent items={hours} selectedItem={selectedHour} type="hour" onSelect={handleSelectTime}/>
+              <Divider />
+              <TimeColumnComponent items={minutes} selectedItem={selectedMinute} type="minute" onSelect={handleSelectTime}/>
+              <Divider />
+              <TimeColumn>
+                {periods.map((period) => (
+                  <TimeItem
+                    key={period}
+                    isSelected={selectedPeriod === period}
+                    onClick={() => handleSelectTime(period, "period")}
+                  >{period}</TimeItem>
+                ))}
+              </TimeColumn>
+            </ColumnContainer>
+          </TimePanel>
         </PopupWrapper>
       )}
     </DateTimePickerWrapper>
