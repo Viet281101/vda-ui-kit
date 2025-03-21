@@ -102,7 +102,7 @@ const PopupWrapper = styled.div`
   z-index: 100;
   user-select: none;
   margin-top: ${({ position, hasLabel }) => (position === "bottom" ? (hasLabel ? "-18px" : "-35px") : "0")};
-  margin-bottom: ${({ position }) => (position === "top" ? "-17px" : "0")};
+  margin-bottom: ${({ position, hasLabel }) => (position === "top" ? (hasLabel ? "-17px" : "0") : "0")};
 `;
 
 const DateBar = styled.div`

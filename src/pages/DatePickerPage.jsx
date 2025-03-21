@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import DatePicker from "../components/DatePicker";
+import DateTimePicker from "../components/DateTimePicker";
 import "../styles/textInputPage.scss";
 
 const DatePickerPage = () => {
@@ -58,6 +59,18 @@ const DatePickerPage = () => {
           <tr>
             <td>Multi Date</td>
             <td><DatePicker multiDate /></td>
+          </tr>
+
+          {/* Date Time Picker */}
+          <tr>
+            <td>Date Time Picker</td>
+            <td><DateTimePicker label="Choose Date Time" alwaysShowLabel format="dd/mm/yyyy hh:mm AM/PM" showPlaceholderLabel /></td>
+          </tr>
+
+          {/* Date Time Picker Error State */}
+          <tr>
+            <td>Date Time Picker</td>
+            <td><DateTimePicker label="Choose Date Time" format="dd/mm/yyyy hh:mm AM/PM" error /></td>
           </tr>
         </tbody>
       </table>
