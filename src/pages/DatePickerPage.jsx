@@ -55,28 +55,28 @@ const DatePickerPage = () => {
             <td><DatePicker label="Choose Date" disabled defaultValue="03/21/2025" /></td>
           </tr>
 
-          {/* Multi Date State */}
-          <tr>
-            <td>Multi Date</td>
-            <td><DatePicker multiDate /></td>
-          </tr>
-
           {/* Date Time Picker */}
           <tr>
             <td>Date Time Picker</td>
-            <td><DateTimePicker width="410px" label="Choose Date Time" alwaysShowLabel format="dd/mm/yyyy hh:mm AM/PM" showPlaceholderLabel /></td>
+            <td><DateTimePicker width="410px" label="Choose Date Time" alwaysShowLabel format="dd/mm/yyyy hh:mm AM/PM" showPlaceholderLabel allowManualInput /></td>
           </tr>
 
           {/* Date Time Picker Error State */}
           <tr>
             <td>Date Time Picker Error State</td>
-            <td><DateTimePicker width="410px" label="Choose Date Time" format="dd/mm/yyyy hh:mm AM/PM" error /></td>
+            <td><DateTimePicker width="410px" label="Choose Date Time" allowManualInput format="dd/mm/yyyy hh:mm AM/PM" error /></td>
           </tr>
 
           {/* Date Time Picker Disabled State */}
           <tr>
             <td>Date Time Picker Disabled State</td>
             <td><DateTimePicker width="410px" label="Choose Date Time" disabled /></td>
+          </tr>
+
+          {/* Multi Date State */}
+          <tr>
+            <td>Multi Date (not done yet)</td>
+            <td><DatePicker multiDate /></td>
           </tr>
         </tbody>
       </table>

@@ -216,15 +216,8 @@ const DateCell = styled.button`
   width: 32px;
   height: 32px;
   border: none;
-  background: ${({ isSelected, isToday }) =>
-    isSelected ? "#007EB0" :
-    isToday ? "transparent" :
-    "transparent"};
-  color: ${({ isSelected, isToday, isOtherMonth }) =>
-    isSelected ? "#FFFFFF" :
-    isToday ? "#007EB0" :
-    isOtherMonth ? "#99A4A9" :
-    "#0A1629"};
+  background: ${({ isSelected, isToday }) => isSelected ? "#007EB0" : isToday ? "transparent" : "transparent"};
+  color: ${({ isSelected, isToday, isOtherMonth }) => isSelected ? "#FFFFFF" : isToday ? "#007EB0" : isOtherMonth ? "#99A4A9" : "#0A1629"};
   font-family: Roboto;
   font-weight: 400;
   font-size: 14px;
@@ -403,9 +396,7 @@ const Footer = styled.div`
 const TimeColumnComponent = ({ items, selectedItem, type, onSelect }) => {
   return (
     <TimeColumn>
-      {items.map((item, index) => (
-        <TimeItem key={`${item}-${index}`} isSelected={selectedItem === item} onClick={() => onSelect(item, type)}>{item}</TimeItem>
-      ))}
+      {items.map((item, index) => (<TimeItem key={`${item}-${index}`} isSelected={selectedItem === item} onClick={() => onSelect(item, type)}>{item}</TimeItem>))}
     </TimeColumn>
   );
 };
@@ -430,7 +421,10 @@ const DateTimePicker = ({
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const monthsList = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  const [isYearGrid, setIsYearGrid] = useState(false);
+  const [isMonthGrid, setIsMonthGrid] = useState(false);
+  const [yearRange, setYearRange] = useState([]);
   const [selectedHour, setSelectedHour] = useState("12");
   const [selectedMinute, setSelectedMinute] = useState("00");
   const [selectedPeriod, setSelectedPeriod] = useState("AM");
@@ -462,9 +456,10 @@ const DateTimePicker = ({
         isToday,
       });
     }
-    while (days.length % 7 !== 0) {
+    while (days.length < 42) {
+      const nextDay = days.length - (firstDay === 0 ? 6 : firstDay - 1) - lastDate + 1;
       days.push({
-        day: days.length % 7 + 1,
+        day: nextDay,
         isOtherMonth: true,
         isSelected: false,
         isToday: false,
@@ -474,6 +469,11 @@ const DateTimePicker = ({
   };
   const calendarDays = generateCalendarDays(currentMonth, currentYear);
 
+  const updateYearRange = () => {
+    const startYear = Math.floor(currentYear / 15) * 15;
+    setYearRange(Array.from({ length: 15 }, (_, i) => startYear + i));
+  };
+
   const togglePopup = (e) => {
     e.stopPropagation();
     if (disabled) return;
@@ -481,10 +481,26 @@ const DateTimePicker = ({
     if (!isPopupOpen && inputRef.current) inputRef.current.focus();
   };
 
+  const toggleYearGrid = () => {
+    if (!isYearGrid) updateYearRange();
+    setIsYearGrid(!isYearGrid);
+    setIsMonthGrid(false);
+  };
+
   const handleSelectTime = (value, type) => {
     if (type === "hour") setSelectedHour(value);
     if (type === "minute") setSelectedMinute(value);
     if (type === "period") setSelectedPeriod(value);
+  };
+
+  const handleSelectYear = (year) => {
+    setCurrentYear(year);
+    setIsYearGrid(false);
+    setIsMonthGrid(true);
+  };
+  const handleSelectMonth = (monthIndex) => {
+    setCurrentMonth(monthIndex);
+    setIsMonthGrid(false);
   };
 
   const handleNow = () => {
@@ -502,9 +518,37 @@ const DateTimePicker = ({
   };
 
   const handleConfirm = () => {
-    setDate(`${String(selectedDate.getMonth() + 1).padStart(2, "0")}/${String(selectedDate.getDate()).padStart(2, "0")}/${selectedDate.getFullYear()} ${selectedHour}:${selectedMinute} ${selectedPeriod}`);
+    setDate(
+      `${String(selectedDate.getMonth() + 1).padStart(2, "0")}/` +
+      `${String(selectedDate.getDate()).padStart(2, "0")}/` +
+      `${selectedDate.getFullYear()} ` +
+      `${selectedHour}:${selectedMinute} ${selectedPeriod}`
+    );
     setIsPopupOpen(false);
   };
+
+  const updateMonthRange = (offset) => {
+    setCurrentMonth((prevMonth) => {
+      let newMonth = prevMonth + offset;
+      let newYear = currentYear;
+      if (newMonth < 0) {
+        newMonth = 11;
+        newYear -= 1;
+      } else if (newMonth > 11) {
+        newMonth = 0;
+        newYear += 1;
+      }
+      setCurrentYear(newYear);
+      return newMonth;
+    });
+  };
+  const handlePrevMonth = () => updateMonthRange(-1);
+  const handleNextMonth = () => updateMonthRange(1);
+
+  useEffect(() => {
+    updateYearRange();
+    // eslint-disable-next-line
+  }, [currentYear]);
 
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
@@ -523,6 +567,11 @@ const DateTimePicker = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handlePrevYear = () => setCurrentYear(prev => prev - 1);
+  const handleNextYear = () => setCurrentYear(prev => prev + 1);
+  const handlePrevYearRange = () => setCurrentYear(prev => prev - 15);
+  const handleNextYearRange = () => setCurrentYear(prev => prev + 15);
+
   return (
     <DateTimePickerWrapper width={width} height={height}>
       {label && <Label isVisible={isFocused || alwaysShowLabel} error={error}>{label}</Label>}
@@ -540,41 +589,77 @@ const DateTimePicker = ({
           isFocused={isFocused}
           readOnly={!allowManualInput}
         />
-        <IconWrapper disabled={disabled} onClick={togglePopup}>
-          <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} />
-        </IconWrapper>
+        <IconWrapper disabled={disabled} onClick={togglePopup}><CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} /></IconWrapper>
       </InputContainer>
       {error && <ErrorMessage>Error message</ErrorMessage>}
       {isPopupOpen && (
         <PopupWrapper ref={popupRef}>
           <DatePanel>
-            <DateBar>
-              <MonthYearContainer>
-                <MonthText>{monthsList[currentMonth]}</MonthText>
-                <YearText>{currentYear}</YearText>
-              </MonthYearContainer>
-              <ArrowContainer>
-                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1))}><ArrowLeftIcon /></ArrowButton>
-                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1))}><ArrowRightIcon /></ArrowButton>
-              </ArrowContainer>
-            </DateBar>
-            <DateGridWrapper>
-              {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (<DayLabel key={i}>{d}</DayLabel>))}
-              {calendarDays.map(({ day, isOtherMonth, isSelected, isToday }, index) => (
-                <DateCell
-                  key={index}
-                  isOtherMonth={isOtherMonth}
-                  isSelected={isSelected}
-                  isToday={isToday}
-                  onClick={() => {
-                    const selected = new Date(currentYear, currentMonth, day);
-                    setSelectedDate(selected);
-                    setDate(`${String(selected.getMonth() + 1).padStart(2, "0")}/${String(selected.getDate()).padStart(2, "0")}/${selected.getFullYear()}`);
-                    setIsPopupOpen(false);
-                  }}
-                >{day}</DateCell>
-              ))}
-            </DateGridWrapper>
+            {isYearGrid ? (
+              <>
+                <YearBar>
+                  <YearGroupContainer onClick={toggleYearGrid}>
+                    <YearRangeText>{`${yearRange[0]} - ${yearRange[14]}`}</YearRangeText>
+                    <ArrowDownIcon />
+                  </YearGroupContainer>
+                  <ArrowContainer>
+                    <ArrowButton onClick={handlePrevYearRange}><ArrowLeftIcon /></ArrowButton>
+                    <ArrowButton onClick={handleNextYearRange}><ArrowRightIcon /></ArrowButton>
+                  </ArrowContainer>
+                </YearBar>
+                <YearGridWrapper>
+                  {yearRange.map((year) => (<YearCell key={year} isSelected={year === currentYear} onClick={() => handleSelectYear(year)}>{year}</YearCell>))}
+                </YearGridWrapper>
+              </>
+            ) : isMonthGrid ? (
+              <>
+                <MonthBar>
+                  <YearGroupContainer onClick={toggleYearGrid}>
+                    <YearOnlyText>{currentYear}</YearOnlyText>
+                    <ArrowUpIcon />
+                  </YearGroupContainer>
+                  <ArrowContainer>
+                    <ArrowButton onClick={handlePrevYear}><ArrowLeftIcon /></ArrowButton>
+                    <ArrowButton onClick={handleNextYear}><ArrowRightIcon /></ArrowButton>
+                  </ArrowContainer>
+                </MonthBar>
+                <MonthGridWrapper>
+                  {monthsList.map((month, index) => (
+                    <MonthCell key={index} isSelected={index === currentMonth} onClick={() => handleSelectMonth(index)}>{month}</MonthCell>
+                  ))}
+                </MonthGridWrapper>
+              </>
+            ) : (
+              <>
+                <DateBar>
+                  <MonthYearContainer onClick={toggleYearGrid}>
+                    <MonthText>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' })}</MonthText>
+                    <YearText>{currentYear}</YearText>
+                    {isYearGrid ? <ArrowUpIcon /> : <ArrowDownIcon />}
+                  </MonthYearContainer>
+                  <ArrowContainer>
+                    <ArrowButton onClick={handlePrevMonth}><ArrowLeftIcon /></ArrowButton>
+                    <ArrowButton onClick={handleNextMonth}><ArrowRightIcon /></ArrowButton>
+                  </ArrowContainer>
+                </DateBar>
+                <DateGridWrapper>
+                  {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (<DayLabel key={i}>{d}</DayLabel>))}
+                  {calendarDays.map(({ day, isOtherMonth, isSelected, isToday }, index) => (
+                    <DateCell
+                      key={index}
+                      isOtherMonth={isOtherMonth}
+                      isSelected={isSelected}
+                      isToday={isToday}
+                      onClick={() => {
+                        const selected = new Date(currentYear, currentMonth, day);
+                        setSelectedDate(selected);
+                        setDate(`${String(selected.getMonth() + 1).padStart(2, "0")}/${String(selected.getDate()).padStart(2, "0")}/${selected.getFullYear()}`);
+                      }}
+                    >{day}</DateCell>
+                  ))}
+                </DateGridWrapper>
+              </>
+            )}
           </DatePanel>
 
           <TimePanel>
@@ -584,11 +669,7 @@ const DateTimePicker = ({
               <Divider />
               <TimeColumnComponent items={minutes} selectedItem={selectedMinute} type="minute" onSelect={handleSelectTime}/>
               <Divider />
-              <TimeColumn>
-                {periods.map((period) => (
-                  <TimeItem key={period} isSelected={selectedPeriod === period} onClick={() => handleSelectTime(period, "period")}>{period}</TimeItem>
-                ))}
-              </TimeColumn>
+              <TimeColumn>{periods.map((period) => (<TimeItem key={period} isSelected={selectedPeriod === period} onClick={() => handleSelectTime(period, "period")}>{period}</TimeItem>))}</TimeColumn>
             </ColumnContainer>
             <Footer>
               <Button type="outline3" style={{ width: "29px", height: "14px", margin: "auto 0", fontWeight: 400 }} onClick={handleNow}>Now</Button>
