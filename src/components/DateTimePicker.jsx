@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
+import Button from "./Button";
 
 const DateTimePickerWrapper = styled.div`
   position: relative;
@@ -391,17 +392,19 @@ const Divider = styled.div`
   background: #E5E9EA;
 `;
 
+const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: auto;
+  height: 48px;
+`;
+
 const TimeColumnComponent = ({ items, selectedItem, type, onSelect }) => {
   return (
     <TimeColumn>
       {items.map((item, index) => (
-        <TimeItem
-          key={`${item}-${index}`}
-          isSelected={selectedItem === item}
-          onClick={() => onSelect(item, type)}
-        >
-          {item}
-        </TimeItem>
+        <TimeItem key={`${item}-${index}`} isSelected={selectedItem === item} onClick={() => onSelect(item, type)}>{item}</TimeItem>
       ))}
     </TimeColumn>
   );
@@ -422,11 +425,12 @@ const DateTimePicker = ({
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const inputRef = useRef(null);
+  const popupRef = useRef(null);
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const monthsList = ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"];
+  const monthsList = ["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const [selectedHour, setSelectedHour] = useState("12");
   const [selectedMinute, setSelectedMinute] = useState("00");
   const [selectedPeriod, setSelectedPeriod] = useState("AM");
@@ -483,6 +487,25 @@ const DateTimePicker = ({
     if (type === "period") setSelectedPeriod(value);
   };
 
+  const handleNow = () => {
+    const now = new Date();
+    const hours = now.getHours() % 12 || 12;
+    const minutes = now.getMinutes();
+    const period = now.getHours() >= 12 ? "PM" : "AM";
+    setSelectedHour(String(hours).padStart(2, "0"));
+    setSelectedMinute(String(minutes).padStart(2, "0"));
+    setSelectedPeriod(period);
+    setSelectedDate(now);
+    setCurrentMonth(now.getMonth());
+    setCurrentYear(now.getFullYear());
+    setDate(`${String(now.getMonth() + 1).padStart(2, "0")}/${String(now.getDate()).padStart(2, "0")}/${now.getFullYear()} ${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")} ${period}`);
+  };
+
+  const handleConfirm = () => {
+    setDate(`${String(selectedDate.getMonth() + 1).padStart(2, "0")}/${String(selectedDate.getDate()).padStart(2, "0")}/${selectedDate.getFullYear()} ${selectedHour}:${selectedMinute} ${selectedPeriod}`);
+    setIsPopupOpen(false);
+  };
+
   useEffect(() => {
     if (alwaysFocused && inputRef.current) {
       inputRef.current.focus();
@@ -491,9 +514,10 @@ const DateTimePicker = ({
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (!inputRef.current?.contains(e.target)) {
-        setIsPopupOpen(false);
-      }
+      if (
+        !inputRef.current?.contains(e.target) &&
+        !popupRef.current?.contains(e.target)
+      ) { setIsPopupOpen(false); }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -522,7 +546,7 @@ const DateTimePicker = ({
       </InputContainer>
       {error && <ErrorMessage>Error message</ErrorMessage>}
       {isPopupOpen && (
-        <PopupWrapper>
+        <PopupWrapper ref={popupRef}>
           <DatePanel>
             <DateBar>
               <MonthYearContainer>
@@ -530,12 +554,8 @@ const DateTimePicker = ({
                 <YearText>{currentYear}</YearText>
               </MonthYearContainer>
               <ArrowContainer>
-                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1))}>
-                  <ArrowLeftIcon />
-                </ArrowButton>
-                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1))}>
-                  <ArrowRightIcon />
-                </ArrowButton>
+                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1))}><ArrowLeftIcon /></ArrowButton>
+                <ArrowButton onClick={() => setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1))}><ArrowRightIcon /></ArrowButton>
               </ArrowContainer>
             </DateBar>
             <DateGridWrapper>
@@ -566,14 +586,14 @@ const DateTimePicker = ({
               <Divider />
               <TimeColumn>
                 {periods.map((period) => (
-                  <TimeItem
-                    key={period}
-                    isSelected={selectedPeriod === period}
-                    onClick={() => handleSelectTime(period, "period")}
-                  >{period}</TimeItem>
+                  <TimeItem key={period} isSelected={selectedPeriod === period} onClick={() => handleSelectTime(period, "period")}>{period}</TimeItem>
                 ))}
               </TimeColumn>
             </ColumnContainer>
+            <Footer>
+              <Button type="outline3" style={{ width: "29px", height: "14px", margin: "auto 0", fontWeight: 400 }} onClick={handleNow}>Now</Button>
+              <Button type="primary1" style={{ width: "39px", margin: "auto 0" }} onClick={handleConfirm}>OK</Button>
+            </Footer>
           </TimePanel>
         </PopupWrapper>
       )}
