@@ -52,9 +52,9 @@ const InputField = styled.input`
   }
 `;
 
-const ErrorMessage = styled.span`
+const PlaceholderLabel = styled.span`
   font-size: 12px;
-  color: #E71D36;
+  color: ${({ error }) => (error ? "#E71D36" : "#66777E")};
   padding-left: 16px;
 `;
 
@@ -410,13 +410,16 @@ const DateTimePicker = ({
   alwaysFocused = false,
   allowManualInput = false,
   disabled = false,
-  error = false,
+  showPlaceholderLabel = false,
+  error = "",
+  format = "mm/dd/yyyy hh:MM AM",
 }) => {
   const [date, setDate] = useState("");
   const [isFocused, setIsFocused] = useState(alwaysFocused);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const inputRef = useRef(null);
   const popupRef = useRef(null);
+  const iconRef = useRef(null);
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -431,6 +434,7 @@ const DateTimePicker = ({
   const hours = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
   const minutes = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, "0"));
   const periods = ["AM", "PM"];
+  const errorMessage = error && typeof error === "string" ? error : "Error Message";
 
   const generateCalendarDays = (month, year) => {
     const firstDay = new Date(year, month, 1).getDay();
@@ -474,11 +478,26 @@ const DateTimePicker = ({
     setYearRange(Array.from({ length: 15 }, (_, i) => startYear + i));
   };
 
+  const openPopup = () => {
+    if (!disabled) {
+      setIsPopupOpen(true);
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 0);
+    }
+  };
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
   const togglePopup = (e) => {
     e.stopPropagation();
     if (disabled) return;
-    setIsPopupOpen((prev) => !prev);
-    if (!isPopupOpen && inputRef.current) inputRef.current.focus();
+  
+    if (isPopupOpen) {
+      closePopup();
+    } else {
+      openPopup();
+    }
   };
 
   const toggleYearGrid = () => {
@@ -491,6 +510,19 @@ const DateTimePicker = ({
     if (type === "hour") setSelectedHour(value);
     if (type === "minute") setSelectedMinute(value);
     if (type === "period") setSelectedPeriod(value);
+    const selected = new Date(selectedDate);
+    const hour = parseInt(type === "hour" ? value : selectedHour, 10);
+    const minute = parseInt(type === "minute" ? value : selectedMinute, 10);
+    const period = type === "period" ? value : selectedPeriod;
+    const finalHour = period === "PM" ? (hour % 12) + 12 : hour % 12;
+    selected.setHours(finalHour);
+    selected.setMinutes(minute);
+    setDate(
+      `${String(selected.getMonth() + 1).padStart(2, "0")}/` +
+      `${String(selected.getDate()).padStart(2, "0")}/` +
+      `${selected.getFullYear()} ` +
+      `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")} ${period}`
+    );
   };
 
   const handleSelectYear = (year) => {
@@ -560,7 +592,8 @@ const DateTimePicker = ({
     const handleClickOutside = (e) => {
       if (
         !inputRef.current?.contains(e.target) &&
-        !popupRef.current?.contains(e.target)
+        !popupRef.current?.contains(e.target) &&
+        !iconRef.current?.contains(e.target)
       ) { setIsPopupOpen(false); }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -589,9 +622,11 @@ const DateTimePicker = ({
           isFocused={isFocused}
           readOnly={!allowManualInput}
         />
-        <IconWrapper disabled={disabled} onClick={togglePopup}><CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} /></IconWrapper>
+        <IconWrapper ref={iconRef} disabled={disabled} onClick={togglePopup}>
+          <CalendarIcon color={disabled ? "#CCD2D4" : "#334A54"} />
+        </IconWrapper>
       </InputContainer>
-      {error && <ErrorMessage>Error message</ErrorMessage>}
+      {(error || showPlaceholderLabel) && (<PlaceholderLabel error={error}>{error ? errorMessage : format}</PlaceholderLabel>)}
       {isPopupOpen && (
         <PopupWrapper ref={popupRef}>
           <DatePanel>
